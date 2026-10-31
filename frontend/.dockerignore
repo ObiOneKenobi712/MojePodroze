@@ -1,0 +1,10 @@
+# Nie kopiujemy do obrazu
+node_modules
+dist
+.vite
+coverage
+*.log
+.env
+.env.*
+Dockerfile
+.dockerignore
