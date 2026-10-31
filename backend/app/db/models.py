@@ -17,6 +17,7 @@ from sqlalchemy.orm import Mapped, mapped_column, relationship
 from app.db.base import Base
 from app.db.types import Money
 from app.domain import items as domain_items
+from app.domain.album import pick_cover
 from app.domain.enums import PlaceKind, Section, TripStatus, TripType
 from app.domain.trips import TripSnapshot
 
@@ -115,6 +116,11 @@ class Trip(Base):
         enum_column(TripStatus, "trip_status"), default=TripStatus.PLANNED
     )
     planned_budget: Mapped[Decimal | None] = mapped_column(Money)
+    # Wybrana okładka. Bez relationship: photos → trips i trips → photos tworzą cykl, a do
+    # odczytu wystarczy id. Usunięcie zdjęcia czyści pole w bazie (ON DELETE SET NULL).
+    cover_photo_id: Mapped[int | None] = mapped_column(
+        ForeignKey("photos.id", ondelete="SET NULL", use_alter=True)
+    )
     created_at: Mapped[datetime] = mapped_column(default=utc_now)
     updated_at: Mapped[datetime] = mapped_column(default=utc_now, onupdate=utc_now)
 
@@ -135,7 +141,17 @@ class Trip(Base):
     diary_entries: Mapped[list["DiaryEntry"]] = relationship(
         cascade="all, delete-orphan", order_by="DiaryEntry.id"
     )
-    photos: Mapped[list["Photo"]] = relationship(cascade="all, delete-orphan", order_by="Photo.id")
+    photos: Mapped[list["Photo"]] = relationship(
+        cascade="all, delete-orphan",
+        order_by="Photo.id",
+        foreign_keys="Photo.trip_id",  # trips.cover_photo_id to drugi klucz między tabelami
+    )
+
+    @property
+    def effective_cover_photo_id(self) -> int | None:
+        """Okładka do pokazania: wybrana albo pierwsze zdjęcie w kolejności albumu."""
+        ordered = sorted(self.photos, key=lambda photo: (photo.day, photo.uploaded_at, photo.id))
+        return pick_cover(self.cover_photo_id, [photo.id for photo in ordered])
 
     def to_snapshot(self) -> TripSnapshot:
         return TripSnapshot(
@@ -252,6 +268,11 @@ class Place(TripItem):
     """Nocleg albo atrakcja."""
 
     __tablename__ = "places"
+    __table_args__ = (
+        CheckConstraint(
+            "check_out_date IS NULL OR check_out_date > visit_date", name="check_out_after_visit"
+        ),
+    )
     __mapper_args__ = {"polymorphic_identity": Section.PLACES.value}  # noqa: RUF012
 
     id: Mapped[int] = mapped_column(
@@ -260,6 +281,7 @@ class Place(TripItem):
     name: Mapped[str] = mapped_column(String(150))
     kind: Mapped[PlaceKind] = mapped_column(enum_column(PlaceKind, "place_kind"))
     visit_date: Mapped[date]
+    check_out_date: Mapped[date | None]
     note: Mapped[str | None] = mapped_column(Text)
 
     def to_domain(self) -> domain_items.TripItem:

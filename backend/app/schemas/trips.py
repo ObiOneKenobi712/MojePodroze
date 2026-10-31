@@ -54,6 +54,14 @@ class TripStatusIn(BaseModel):
     status: TripStatus = Field(description="Docelowy status (o jeden krok od obecnego).")
 
 
+class TripCoverIn(BaseModel):
+    photo_id: int | None = Field(
+        ge=1,
+        description="Id zdjęcia tej podróży albo null – okładką będzie pierwsze zdjęcie albumu.",
+        examples=[12],
+    )
+
+
 class TripOut(ApiModel):
     id: int
     name: str
@@ -65,6 +73,10 @@ class TripOut(ApiModel):
     character: DictionaryEntryOut
     status: TripStatus
     planned_budget: DecimalOut | None
+    cover_photo_id: int | None = Field(
+        default=None, description="Wybrana okładka; null = pierwsze zdjęcie albumu."
+    )
+    effective_cover_photo_id: int | None = Field(default=None, exclude=True)
     created_at: datetime
     updated_at: datetime
 
@@ -77,6 +89,17 @@ class TripOut(ApiModel):
     @property
     def trip_type_label(self) -> str:
         return self.trip_type.label
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def cover_photo_url(self) -> str | None:
+        """Plik okładki (wybranej albo pierwszego zdjęcia); null, gdy podróż nie ma zdjęć.
+
+        Wymaga nagłówka X-User-Id, tak jak ``file_url`` zdjęcia.
+        """
+        if self.effective_cover_photo_id is None:
+            return None
+        return f"/api/trips/{self.id}/photos/{self.effective_cover_photo_id}/file"
 
     @computed_field  # type: ignore[prop-decorator]
     @property

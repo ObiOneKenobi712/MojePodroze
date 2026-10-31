@@ -1,4 +1,4 @@
-"""Widżety ekranu głównego korzystające z zewnętrznych API (Open-Meteo, NBP).
+"""Funkcje korzystające z zewnętrznych API (Open-Meteo, NBP, Wikipedia).
 
 Przy awarii zewnętrznego API endpoint zwraca 503 EXTERNAL_API_UNAVAILABLE, a GUI pokazuje
 komunikat tylko w danym widżecie.
@@ -9,11 +9,13 @@ from typing import Annotated
 
 from fastapi import APIRouter, Query
 
-from app.api.deps import CurrentUser, RatesClient, WeatherClient
-from app.api.responses import EXTERNAL, UNAUTHORIZED, VALIDATION
+from app.api.deps import CityImageClient, CurrentUser, OwnedTrip, RatesClient, WeatherClient
+from app.api.responses import EXTERNAL, NOT_FOUND, UNAUTHORIZED, VALIDATION
+from app.core.errors import NotFoundError
 from app.domain.currency import convert_to_pln
 from app.domain.enums import Currency
 from app.schemas.external import (
+    CityImageOut,
     CityOut,
     ConversionOut,
     CurrentWeatherOut,
@@ -89,3 +91,21 @@ def convert_currency(
         amount_pln=convert_to_pln(amount, rate),
         effective_date=table.effective_date,
     )
+
+
+@router.get(
+    "/trips/{trip_id}/city-image",
+    tags=["Zdjęcie miasta"],
+    summary="Zdjęcie miasta celu podróży z Wikipedii",
+    description=(
+        "Miniatura z polskiego artykułu o mieście `destination_city`. Brak artykułu albo zdjęcia "
+        "→ 404 NOT_FOUND (GUI zostawia kolor). Pod zdjęciem trzeba pokazać link `source_url`."
+    ),
+    responses=NOT_FOUND,
+    name="get_trip_city_image",
+)
+def get_trip_city_image(trip: OwnedTrip, images: CityImageClient) -> CityImageOut:
+    image = images.city_image(trip.destination_city)
+    if image is None:
+        raise NotFoundError("Nie znaleziono zdjęcia miasta w Wikipedii.")
+    return CityImageOut.model_validate(image)

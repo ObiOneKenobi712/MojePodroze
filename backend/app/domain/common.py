@@ -1,12 +1,14 @@
 """Drobne funkcje pomocnicze współdzielone przez moduły domenowe."""
 
-from datetime import date
+from datetime import date, datetime, timedelta
 from decimal import ROUND_HALF_UP, Decimal
 
-from app.domain.errors import DateOutsideTripError
+from app.domain.errors import DateOutsideTripError, FlightTooLongError
 
 ZERO = Decimal("0")
 CENT = Decimal("0.01")
+MAX_FLIGHT_HOURS = 48
+MAX_FLIGHT_DURATION = timedelta(hours=MAX_FLIGHT_HOURS)
 
 
 def round_half_up(value: Decimal) -> Decimal:
@@ -31,4 +33,12 @@ def ensure_date_within_trip(day: date, start_date: date, end_date: date) -> None
         raise DateOutsideTripError(
             f"Dzień {day.isoformat()} jest poza terminem podróży "
             f"({start_date.isoformat()} – {end_date.isoformat()})."
+        )
+
+
+def ensure_flight_duration(departure_at: datetime, arrival_at: datetime | None) -> None:
+    """Przylot najpóźniej 48 h po wylocie (brak godziny przylotu jest dozwolony)."""
+    if arrival_at is not None and arrival_at - departure_at > MAX_FLIGHT_DURATION:
+        raise FlightTooLongError(
+            f"Przylot może być najpóźniej {MAX_FLIGHT_HOURS} godziny po wylocie."
         )

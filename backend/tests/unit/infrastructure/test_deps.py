@@ -6,6 +6,7 @@ from pathlib import Path
 import httpx
 
 from app.api.deps import (
+    get_city_image_client,
     get_http_client,
     get_photo_storage,
     get_rates_client,
@@ -15,6 +16,7 @@ from app.api.deps import (
 from app.config import Settings
 from app.integrations.nbp import NbpClient
 from app.integrations.open_meteo import OpenMeteoClient
+from app.integrations.wikipedia import WikipediaClient
 from app.services.photo_storage import PhotoStorage
 
 
@@ -26,6 +28,7 @@ def make_settings(tmp_path: Path) -> Settings:
         weather_api_url="https://forecast.test",
         geocoding_api_url="https://geo.test",
         nbp_api_url="https://nbp.test",
+        wikipedia_summary_url="https://wiki.test/",
     )
 
 
@@ -43,6 +46,7 @@ def test_external_clients_are_built_from_settings(tmp_path: Path) -> None:
     with httpx.Client() as http:
         assert isinstance(get_weather_client(http, settings), OpenMeteoClient)
         assert isinstance(get_rates_client(http, settings), NbpClient)
+        assert isinstance(get_city_image_client(http, settings), WikipediaClient)
 
 
 def test_photo_storage_and_today(tmp_path: Path) -> None:

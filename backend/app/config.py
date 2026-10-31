@@ -24,6 +24,7 @@ class Settings(BaseSettings):
     weather_api_url: str = "https://api.open-meteo.com/v1/forecast"
     geocoding_api_url: str = "https://geocoding-api.open-meteo.com/v1/search"
     nbp_api_url: str = "https://api.nbp.pl/api/exchangerates/tables/A/"
+    wikipedia_summary_url: str = "https://pl.wikipedia.org/api/rest_v1/page/summary/"
     external_api_timeout_seconds: float = 5.0
 
 

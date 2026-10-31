@@ -59,6 +59,7 @@ OPENAPI_TAGS = [
     {"name": "Statystyki", "description": "Zestawienia ze zrealizowanych podróży."},
     {"name": "Pogoda", "description": "Open-Meteo (bez klucza API)."},
     {"name": "Kursy walut", "description": "API NBP, tabela A (bez klucza API)."},
+    {"name": "Zdjęcie miasta", "description": "Wikipedia (bez klucza API) – zdjęcie celu podróży."},
 ]
 
 

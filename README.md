@@ -130,7 +130,7 @@ Zmienne środowiskowe z prefiksem `MP_` (albo plik `backend/.env`, wzór w `back
 | `MP_MAX_UPLOAD_BYTES` | `10485760` (10 MB) | limit rozmiaru zdjęcia |
 | `MP_AUTO_MIGRATE` | `true` | migracje przy starcie aplikacji |
 | `MP_CORS_ORIGINS` | `["http://localhost:5173", "http://127.0.0.1:5173"]` | adresy frontendu (Vite) |
-| `MP_EXTERNAL_API_TIMEOUT_SECONDS` | `5` | timeout zapytań do Open-Meteo i NBP |
+| `MP_EXTERNAL_API_TIMEOUT_SECONDS` | `5` | timeout zapytań do Open-Meteo, NBP i Wikipedii |
 
 ---
 
@@ -162,7 +162,7 @@ backend/
 │   ├── db/                # SQLAlchemy: modele, typ Money (grosze), sesja, uruchamianie migracji
 │   ├── schemas/           # Pydantic: walidacja wejścia i kształt odpowiedzi API
 │   ├── services/          # logika aplikacyjna: baza + domena (reguły sprawdzane tutaj)
-│   ├── integrations/      # klienci Open-Meteo i NBP (+ czyste funkcje parsujące)
+│   ├── integrations/      # klienci Open-Meteo, NBP i Wikipedii (+ czyste funkcje parsujące)
 │   ├── api/               # routery FastAPI (cienkie), zależności (X-User-Id), opisy błędów
 │   └── core/              # błędy aplikacji i jednolity format odpowiedzi błędów
 ├── migrations/            # Alembic (schemat + dane słownikowe)
@@ -191,7 +191,10 @@ Zasady:
 | Loty tylko w podróży zagranicznej | `domain/items.py` | 409 `SECTION_NOT_ALLOWED` |
 | Zmiana typu na krajową, gdy są loty → „usuń najpierw loty” | `domain/trip_types.py` | 409 `TRIP_TYPE_CHANGE_BLOCKED` |
 | Podróż zagraniczna dostaje paszport, ubezpieczenie, przejściówkę na listę pakowania | `domain/trip_types.py` | – |
-| Punkt planu dnia musi mieścić się w terminie podróży | `domain/common.py` | 422 `DATE_OUTSIDE_TRIP` |
+| Daty pozycji, punktów planu i pamiętnika w terminie podróży (wydatek – dowolna data; lot – liczy się wylot) | `domain/common.py` | 422 `DATE_OUTSIDE_TRIP` |
+| Przylot najpóźniej 48 h po wylocie | `domain/common.py` | 422 `FLIGHT_TOO_LONG` |
+| Nocleg od–do: jeden nocleg na noc, dzień wymeldowania nie jest nocą, wymeldowanie najpóźniej w ostatnim dniu | `domain/stays.py` | 409 `ACCOMMODATION_OVERLAP` / 422 `DATE_OUTSIDE_TRIP` |
+| Okładka: wybrane zdjęcie, a bez wyboru – pierwsze zdjęcie albumu | `domain/album.py` | – |
 | Alert budżetu: < 90% ok, 90–100% ostrzeżenie, > 100% przekroczony | `domain/costs.py` | – |
 | Ocena zbiorcza = zwykła średnia ocen pozycji (bez wag), posiłek = ocena restauracji | `domain/ratings.py` | – |
 | Cudza podróż wygląda jak nieistniejąca | `services/trips.py` | 404 `NOT_FOUND` |
@@ -222,6 +225,7 @@ erDiagram
     trips ||--o{ packing_items : "lista pakowania"
     trips ||--o{ diary_entries : "pamiętnik"
     trips ||--o{ photos : "zdjęcia"
+    photos |o--o| trips : "okładka"
 
     users {
         int id PK
@@ -242,6 +246,7 @@ erDiagram
         int character_id FK
         string status "planned, in_progress, completed, archived"
         int planned_budget "grosze, NULL to brak budzetu"
+        int cover_photo_id FK "NULL to pierwsze zdjecie"
     }
     trip_items {
         int id PK
@@ -255,9 +260,9 @@ erDiagram
 | Tabela | Zawartość |
 |---|---|
 | `users` | login (unikalny), hasło, miasto widżetu pogody (domyślnie Warszawa) |
-| `trips` | właściciel, nazwa, cel (miasto, kraj), daty, typ, charakter, status, budżet |
+| `trips` | właściciel, nazwa, cel (miasto, kraj), daty, typ, charakter, status, budżet, wybrana okładka (`cover_photo_id`, usunięcie zdjęcia → `NULL`) |
 | `trip_items` | **wspólna część pozycji**: podróż, rodzaj (`item_type`), koszt, ocena |
-| `flights` / `transports` / `meals` / `places` / `expenses` | pola specyficzne dla sekcji (dziedziczenie tabel złączonych) |
+| `flights` / `transports` / `meals` / `places` / `expenses` | pola specyficzne dla sekcji (dziedziczenie tabel złączonych); nocleg ma `visit_date` (zameldowanie) i opcjonalne `check_out_date` |
 | `plan_points` | plan dnia: dzień, godzina, miejsce, opis |
 | `wishlist_items` | „chcę odwiedzić” z flagą `visited` |
 | `packing_items` | lista pakowania: `packed`, `is_default` (dodane automatycznie) |
@@ -293,7 +298,7 @@ operations detected”). W fazie testów integracyjnych dojdzie automatyczny tes
 
 ```bash
 cd backend
-pytest                       # wszystkie testy (obecnie 274 jednostkowe, ~3 s)
+pytest                       # wszystkie testy (obecnie 334 jednostkowe, ~3 s)
 pytest -m unit               # tylko jednostkowe – bez bazy i sieci
 pytest --cov                 # z raportem pokrycia (moduł domenowy: 100%, całość: ~64%)
 pytest --cov --cov-report=html   # raport HTML w backend/htmlcov/
@@ -301,9 +306,9 @@ pytest --cov --cov-report=html   # raport HTML w backend/htmlcov/
 
 | Poziom | Gdzie | Co sprawdza |
 |---|---|---|
-| Jednostkowe | `tests/unit/domain` | maszyna stanów (kroki do przodu/wstecz, zabronione przeskoki), archiwum, reguły sekcji dla typu, kosztorys, progi budżetu 89/90/100/101%, średnie ocen, ranking rekomendacji, odliczanie z „zamrożoną” datą, statystyki, kalkulator walut |
-| Jednostkowe | `tests/unit/integrations` | parsowanie odpowiedzi Open-Meteo i NBP, obsługa błędów, klient HTTP z `httpx.MockTransport` |
-| Jednostkowe | `tests/unit/infrastructure` | typ `Money`, rozpoznawanie formatu zdjęcia, zapis plików, walidacja schematów |
+| Jednostkowe | `tests/unit/domain` | maszyna stanów (kroki do przodu/wstecz, zabronione przeskoki), archiwum, reguły sekcji dla typu, kosztorys, progi budżetu 89/90/100/101%, średnie ocen, ranking rekomendacji, odliczanie z „zamrożoną” datą, statystyki, kalkulator walut, daty pozycji (lot 48 h), noclegi od–do i ich nakładanie, wybór okładki |
+| Jednostkowe | `tests/unit/integrations` | parsowanie odpowiedzi Open-Meteo, NBP i Wikipedii, obsługa błędów, klient HTTP z `httpx.MockTransport` |
+| Jednostkowe | `tests/unit/infrastructure` | typ `Money`, rozpoznawanie formatu zdjęcia, zapis plików, walidacja schematów, konfiguracja relacji ORM |
 | Integracyjne | `tests/integration` (**późniejszy etap**) | endpointy na prawdziwej bazie SQLite (świeża kopia dla każdego testu, schemat z migracji), izolacja danych użytkowników, upload zdjęć, archiwum, atrapy API pogody i NBP (także ich awaria), migracje, Swagger |
 | Mutacyjne | `mutmut` na `app/domain` | jakość testów jednostkowych domeny (patrz niżej) |
 
@@ -393,6 +398,7 @@ na bieżąco w edytorze (bez pokrycia testami i bez dashboardu).
 | [Open-Meteo](https://open-meteo.com/) – forecast | bieżąca pogoda w widżecie | nie |
 | [Open-Meteo](https://open-meteo.com/en/docs/geocoding-api) – geocoding | wyszukiwanie miasta w widżecie | nie |
 | [NBP](https://api.nbp.pl/) – tabela A | kursy EUR, USD, GBP i kalkulator walut | nie |
+| [Wikipedia](https://pl.wikipedia.org/api/rest_v1/) – podsumowanie artykułu | zdjęcie miasta celu podróży (`/trips/{id}/city-image`) | nie (wymagany `User-Agent` z adresem kontaktowym) |
 
 Gdy API nie odpowiada, endpoint zwraca `503 EXTERNAL_API_UNAVAILABLE`, a pozostałe endpointy
 działają normalnie (GUI pokazuje komunikat tylko w danym widżecie).

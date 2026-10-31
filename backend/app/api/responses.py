@@ -16,14 +16,14 @@ CONFLICT: Responses = {
     409: {
         "model": ErrorResponse,
         "description": "Naruszenie reguły biznesowej, np. TRIP_ARCHIVED, SECTION_NOT_ALLOWED, "
-        "INVALID_STATUS_TRANSITION, TRIP_TYPE_CHANGE_BLOCKED, LOGIN_TAKEN.",
+        "INVALID_STATUS_TRANSITION, TRIP_TYPE_CHANGE_BLOCKED, ACCOMMODATION_OVERLAP, LOGIN_TAKEN.",
     }
 }
 VALIDATION: Responses = {
     422: {
         "model": ValidationErrorResponse,
         "description": "Nieprawidłowe dane (VALIDATION_ERROR, INVALID_REFERENCE, "
-        "DATE_OUTSIDE_TRIP, INVALID_UPLOAD).",
+        "DATE_OUTSIDE_TRIP, FLIGHT_TOO_LONG, INVALID_UPLOAD).",
     }
 }
 EXTERNAL: Responses = {

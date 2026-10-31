@@ -3,9 +3,17 @@
 from datetime import date, datetime
 from typing import Annotated, Self
 
-from pydantic import BaseModel, Field, NaiveDatetime, StringConstraints, model_validator
+from pydantic import (
+    BaseModel,
+    Field,
+    NaiveDatetime,
+    StringConstraints,
+    computed_field,
+    model_validator,
+)
 
 from app.domain.enums import PlaceKind
+from app.domain.stays import nights
 from app.schemas.common import (
     ApiModel,
     DecimalOut,
@@ -104,17 +112,41 @@ class MealOut(RatedItemOutBase):
 class PlaceIn(BaseModel):
     name: Name = Field(examples=["Koloseum"])
     kind: PlaceKind
-    visit_date: date
-    cost: MoneyIn
+    visit_date: date = Field(description="Dzień atrakcji albo dzień zameldowania w noclegu.")
+    check_out_date: date | None = Field(
+        default=None,
+        description="Tylko nocleg: dzień wymeldowania (późniejszy niż zameldowanie). "
+        "Brak = jedna noc.",
+    )
+    cost: MoneyIn = Field(description="Koszt w PLN; dla noclegu – za cały pobyt.")
     rating: Rating | None = None
     note: Note | None = None
+
+    @model_validator(mode="after")
+    def check_check_out(self) -> Self:
+        if self.check_out_date is None:
+            return self
+        if self.kind is not PlaceKind.ACCOMMODATION:
+            raise ValueError("Datę wymeldowania można podać tylko dla noclegu.")
+        if self.check_out_date <= self.visit_date:
+            raise ValueError("Wymeldowanie musi być później niż zameldowanie.")
+        return self
 
 
 class PlaceOut(RatedItemOutBase):
     name: str
     kind: PlaceKind
     visit_date: date
+    check_out_date: date | None
     note: str | None
+
+    @computed_field  # type: ignore[prop-decorator]
+    @property
+    def nights(self) -> int | None:
+        """Liczba nocy noclegu; ``None`` dla atrakcji."""
+        if self.kind is not PlaceKind.ACCOMMODATION:
+            return None
+        return nights(self.visit_date, self.check_out_date)
 
 
 # --- Wydatki inne (bez oceny) ---------------------------------------------------------------
