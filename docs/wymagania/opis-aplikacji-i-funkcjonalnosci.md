@@ -34,8 +34,8 @@ Model danych i architekturę projektujemy od razu pod pełny zakres, żeby etap 
 | Warstwa | Technologia |
 |---|---|
 | Backend (API, logika, baza) | Python, FastAPI, SQLAlchemy, SQLite, zdjęcia w katalogu na dysku |
-| Frontend (GUI w przeglądarce) | React + Vite, React Router, fetch, Pico CSS, zwykły JavaScript (CSR, bez SSR) |
-| Zewnętrzne API | pogoda i wyszukiwanie miasta (Open-Meteo + jego geocoding, bez klucza), kursy walut (API NBP, bez klucza), zdjęcie miasta celu podróży (REST API Wikipedii, bez klucza) |
+| Frontend (GUI w przeglądarce) | React + Vite, React Router, fetch, TypeScript, CSS Modules + tokeny CSS bez frameworka CSS (CSR, bez SSR) |
+| Zewnętrzne API | pogoda i wyszukiwanie miasta (Open-Meteo + jego geocoding, bez klucza), kursy walut (API NBP, bez klucza) |
 | Testy | pytest + pytest-cov, mutmut, Playwright (Python), Vitest dla frontendu, scenariusze manualne |
 | Jakość i uruchamianie | Ruff (+ ESLint na froncie), GitHub Actions, Docker Compose, lokalny SonarQube |
 | Dokumentacja | README.md, AGENTS.md, dokument scenariuszy testów manualnych |
@@ -184,7 +184,7 @@ Wybrałem tylko takie, które są tanie w implementacji i dają dodatkowy materi
 | 7 | **Kalkulator walut** przy kursach na stronie głównej (kwota w EUR/USD/GBP → PLN) | bardzo mały | zaokrąglenia, test jednostkowy na froncie i backendzie |
 | 8 | **Kopiowanie podróży jako szablonu** (np. coroczny wyjazd w góry: kopiuje plan, listę pakowania i budżet, bez kosztów i zdjęć) | mały | reguła, co się kopiuje, a co nie |
 | 9 | **Automatyczne zmiany statusu według dat** (przypomnienie lub propozycja „podróż się zaczęła, oznaczyć jako w trakcie?”) | mały | maszyna stanów + daty |
-| 10 | **Tryb ciemny** (Pico CSS ma go wbudowanego) | prawie zero | scenariusz manualny |
+| 10 | **Tryb ciemny** (drugi zestaw tokenów CSS, przełączany atrybutem `data-theme`) | prawie zero | scenariusz manualny |
 
 **Decyzja (zaakceptowana przez Darka)**:
 - **Wariant podstawowy** dostaje 1, 2, 3, 4 i 7 (lista pakowania, odliczanie, alert budżetu, statystyki, kalkulator walut).

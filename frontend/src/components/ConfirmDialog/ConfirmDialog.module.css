@@ -1,0 +1,79 @@
+/* Okno potwierdzenia: karta na środku, przyciemnione tło */
+.dialog {
+  width: min(440px, calc(100vw - 32px));
+  padding: 28px;
+  border: 0;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  color: var(--color-text);
+  box-shadow: var(--shadow-card-hover);
+  animation: dialog-in 0.2s ease;
+}
+
+.dialog::backdrop {
+  background: rgba(24, 32, 28, 0.45);
+  animation: backdrop-in 0.2s ease;
+}
+
+@keyframes dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+
+@keyframes backdrop-in {
+  from {
+    opacity: 0;
+  }
+}
+
+.title {
+  font-size: 22px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.message {
+  margin-top: 10px;
+  color: var(--color-text-muted);
+}
+
+.actions {
+  margin-top: 24px;
+  display: flex;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.secondary,
+.danger {
+  height: 46px;
+  padding: 0 22px;
+  border-radius: var(--radius-button);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary {
+  border: 1.5px solid var(--color-btn-secondary-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.secondary:hover {
+  background: var(--color-divider);
+}
+
+/* Potwierdzenie usunięcia: biały tekst na ciemnej czerwieni (8,4 : 1) – bez różu, wyraźnie „niebezpieczne” */
+.danger {
+  border: 0;
+  background: var(--color-danger);
+  color: #ffffff;
+}
+
+.danger:hover,
+.danger:focus-visible {
+  background: var(--color-danger-hover);
+}

@@ -1,0 +1,163 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.5;
+  font-variant-numeric: lining-nums;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+a {
+  color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+  color: inherit;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+/* Fokus – WCAG 2.0, kryterium 2.4.7: miękka poświata zamiast ramki.
+   Przezroczysty outline zostaje dla trybu wysokiego kontrastu (tam cienie znikają). */
+a:focus-visible,
+button:focus-visible {
+  outline: 2px solid transparent;
+  border-radius: var(--radius-button);
+  box-shadow:
+    0 0 0 1px var(--focus-ring),
+    0 0 14px 4px color-mix(in srgb, var(--focus-ring) 60%, transparent);
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-bottom-color: var(--focus-ring);
+  box-shadow: 0 2px 0 0 var(--focus-ring);
+}
+
+/* Wysoki kontrast: linki w tekście zawsze podkreślone, fokus grubszy i bez miękkiej poświaty
+   (czarna obwódka 3 px + biały odstęp – widoczna na każdym tle) */
+[data-theme="contrast"] p a,
+[data-theme="contrast"] li a {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+[data-theme="contrast"] a:focus-visible,
+[data-theme="contrast"] button:focus-visible,
+[data-theme="contrast"] input:focus-visible,
+[data-theme="contrast"] select:focus-visible,
+[data-theme="contrast"] textarea:focus-visible {
+  outline: 3px solid #000000;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 2px #ffffff;
+}
+
+/* Tekst tylko dla czytników ekranu (np. etykieta pola) */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Rozwinięta lista <select> w stylu aplikacji (Chrome/Edge 135+: appearance: base-select).
+   To nadal natywny select – klawiatura, czytniki ekranu i Playwright select_option działają bez zmian.
+   Safari i Firefox pokazują zwykłą listę systemową. */
+@supports (appearance: base-select) {
+  select,
+  ::picker(select) {
+    appearance: base-select;
+  }
+
+  select {
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+  }
+
+  /* Strzałka obraca się po rozwinięciu listy */
+  select::picker-icon {
+    color: var(--color-text-muted);
+    transition: rotate 0.2s ease;
+  }
+
+  select:open::picker-icon {
+    rotate: 180deg;
+  }
+
+  ::picker(select) {
+    margin-top: 6px;
+    padding: 6px;
+    border: 1px solid var(--color-divider);
+    border-radius: var(--radius-card);
+    background: var(--color-surface);
+    color: var(--color-text);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  option {
+    padding: 9px 12px;
+    border-radius: var(--radius-small);
+    font-weight: 500;
+    cursor: pointer;
+  }
+
+  /* Najechanie i fokus z klawiatury: jasnozielone tło jak przy zakładkach */
+  option:hover,
+  option:focus-visible {
+    outline: none;
+    background: color-mix(in srgb, var(--focus-ring) 22%, transparent);
+  }
+
+  /* Wybrana opcja: pogrubiona, z szałwiowym „✓” (nie tylko kolorem) */
+  option:checked {
+    font-weight: 700;
+  }
+
+  /* --focus-ring: szałwia w jasnym trybie, jaśniejsza w ciemnym (czytelna na grafitowym tle) */
+  option::checkmark {
+    color: var(--focus-ring);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition: none !important;
+    animation: none !important;
+  }
+}

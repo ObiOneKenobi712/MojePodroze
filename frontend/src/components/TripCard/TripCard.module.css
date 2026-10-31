@@ -1,0 +1,99 @@
+.card {
+  position: relative;
+  display: flex;
+  min-height: 142px;
+  text-decoration: none;
+  border-radius: var(--radius-card);
+  overflow: hidden;
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-card-hover);
+  transform: translateY(-2px);
+}
+
+.card:focus-visible {
+  border-radius: var(--radius-card);
+  transform: translateY(-2px);
+}
+
+/* Okrągła strzałka w prawym dolnym rogu okładki – widoczna zawsze (także na telefonie) */
+.arrow {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: color-mix(in srgb, var(--color-surface) 75%, transparent);
+  color: var(--color-text);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+}
+
+/* Strzałka wskazuje ukośnie w górę i w prawo (↗) */
+.arrow svg {
+  transform: rotate(-45deg);
+  transition: transform 0.25s ease;
+}
+
+/* Najechanie i fokus z klawiatury: strzałka obraca się do poziomu (→), kółko zostaje na miejscu */
+.card:hover .arrow svg,
+.card:focus-visible .arrow svg {
+  transform: rotate(0deg);
+}
+
+.body {
+  flex: 1 1 62%;
+  min-width: 0;
+  padding: 24px 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+}
+
+.title {
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 1.25;
+}
+
+.meta {
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+.cover {
+  flex: 0 0 38%;
+}
+
+.coverImage {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  animation: cover-in 0.35s ease;
+}
+
+/* Zdjęcie wyłania się płynnie z koloru zastępczego, zamiast „wskakiwać” */
+@keyframes cover-in {
+  from {
+    opacity: 0;
+  }
+}
+
+@media (max-width: 640px) {
+  .body {
+    padding: 20px;
+  }
+
+  .title {
+    font-size: 21px;
+  }
+}

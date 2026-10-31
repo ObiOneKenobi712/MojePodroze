@@ -1,0 +1,15 @@
+.label {
+  align-self: flex-start;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding-bottom: 3px;
+  border-bottom: 2px solid currentColor;
+}
+
+/* Kolor tylko kreski – tekst zostaje w kolorze tekstu */
+.planned { border-bottom-color: var(--status-planned); }
+.in_progress { border-bottom-color: var(--status-in-progress); }
+.completed { border-bottom-color: var(--status-completed); }
+.archived { border-bottom-color: var(--status-archived); }

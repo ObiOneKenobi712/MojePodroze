@@ -147,12 +147,15 @@ gita, w pierwszym commicie – można od niej zacząć:
   „Testy integracyjne” w `.github/workflows/backend.yml`, aktualizacja README (sekcja „Testy”),
   tego pliku (tabela faz, sekcja 5, Definition of Done) i decyzji 8 w dokumencie wymagań.
 
-### Faza 3 – Frontend (React + Vite, zwykły JavaScript)
+### Faza 3 – Frontend (React + Vite + TypeScript)
 
-* Katalog `frontend/`. Vite, React Router, `fetch`, Pico CSS. Bez TypeScriptu, bez SSR.
-* Moduł `src/api/client.js`: bazowy URL z `import.meta.env.VITE_API_URL`
-  (domyślnie `http://localhost:8000`), nagłówek `X-User-Id` z `localStorage`, parsowanie błędów
-  `{detail, code, errors}`; 401 → wylogowanie. Endpointy i kody błędów: `docs/api.md`.
+* Katalog `frontend/`. Vite, React Router (`react-router` v7), `fetch`, TypeScript, ESLint. Bez SSR.
+* Style: **CSS Modules + tokeny CSS** (`src/styles/tokens.css`), **bez frameworka CSS** (bez Pico,
+  Tailwinda, MUI). Wygląd, tokeny i zasady dostępności (WCAG 2.0 AA): `docs/design/README.md`.
+* Moduł `src/api/client.ts`: zapytania na ścieżki `/api/...` (w trybie deweloperskim proxy Vite
+  przekazuje je do `http://127.0.0.1:8000`), nagłówek `X-User-Id` z `localStorage`, błędy
+  `{detail, code, errors}` → `ApiError`; 401 → wylogowanie. Typy odpowiedzi: `src/types/api.ts`.
+  Endpointy i kody błędów: `docs/api.md`.
 * Ekrany: logowanie/rejestracja, „Moje podróże” (4 grupy, odliczanie, widżet pogody z wyszukiwarką
   miasta, kursy + kalkulator, statystyki), formularz podróży, szczegóły podróży z zakładkami sekcji
   (tylko `available_sections`), plan dnia, chcę odwiedzić, lista pakowania, pamiętnik, album,
@@ -160,13 +163,8 @@ gita, w pierwszym commicie – można od niej zacząć:
 * Archiwum: gdy `is_read_only`, formularze i przyciski edycji są ukryte/wyłączone.
 * Zdjęcia: `fetch(file_url, {headers})` → `blob` → `URL.createObjectURL`.
 * **Wzorcowo pod Playwright:**
-  * `data-testid` na każdym elemencie interaktywnym i ważnym wyniku, kebab-case, z id dla list:
-    `login-form`, `login-input`, `password-input`, `login-submit`, `register-link`,
-    `trip-group-planned`, `trip-card-{id}`, `countdown`, `weather-widget`, `weather-city-search`,
-    `weather-error`, `rates-widget`, `rate-EUR`, `converter-amount`, `converter-result`,
-    `trip-form`, `trip-name-input`, `trip-save`, `status-button-{status}`, `section-tab-{section}`,
-    `add-flight-button`, `flight-row-{id}`, `cost-total`, `cost-section-{section}`, `budget-alert`,
-    `average-rating`, `album-day-{date}`, `photo-{id}`, `error-message`, `toast-success`.
+  * `data-testid` na każdym elemencie interaktywnym i ważnym wyniku, kebab-case. **Obowiązująca
+    lista nazw jest w `docs/design/README.md`** (sekcja „Testy”) – nowe nazwy dopisuj tam.
   * semantyczny HTML (`<main>`, `<nav>`, `<form>`, `<button>`), `<label for>` przy każdym polu,
     role i `aria-live` dla komunikatów, stabilne teksty błędów (z `detail` backendu);
     **żadnych selektorów opartych na klasach CSS** w testach.
@@ -207,7 +205,7 @@ gita, w pierwszym commicie – można od niej zacząć:
 | 6 | Pogoda dla celu podróży | `GET /api/trips/{id}/weather`: geocoding `destination_city` (+ kraj) → `current_weather`; ten sam klient i atrapa; rozważ zapis współrzędnych celu w `trips` (migracja) |
 | 8 | Kopiowanie podróży jako szablonu | `POST /api/trips/{id}/copy` z nową datą startu: kopiuje plan dnia (z przesunięciem dat), listę pakowania (`packed=false`) i budżet; **bez** kosztów, zdjęć, pamiętnika; reguła „co się kopiuje” w domenie + testy jednostkowe |
 | 9 | Automatyczne propozycje statusu | funkcja domenowa `suggest_status(snapshot, today)` (np. `planned` i `start_date <= today` → `in_progress`; `in_progress` i `end_date < today` → `completed`); pole `suggested_status` w `TripOut` albo endpoint; tylko propozycja, zmiana nadal przez `/status` |
-| 10 | Tryb ciemny | tylko frontend (Pico CSS `data-theme`), zapamiętany w `localStorage`; scenariusz manualny |
+| 10 | Tryb ciemny | tylko frontend (atrybut `data-theme="dark"` na `<html>` przełącza tokeny z `tokens.css`), zapamiętany w `localStorage`; scenariusz manualny |
 
 Poza zakresem (decyzja): waluty obce w kosztach, mapy, EXIF, OpenStreetMap, udostępnianie linkiem, eksport do PDF/plików.
 

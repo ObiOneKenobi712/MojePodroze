@@ -7,7 +7,7 @@ w trakcie wyjazdu. Projekt zaliczeniowy z przedmiotu „Testowanie aplikacji web
 |---|---|---|
 | Backend (API, logika, baza) + testy jednostkowe | **gotowy – etap 1** | Python 3.13, FastAPI, SQLAlchemy 2, Alembic, SQLite, pytest |
 | Testy integracyjne backendu | późniejszy etap (faza 2) | pytest + TestClient, tymczasowa baza SQLite |
-| Frontend (GUI) | do zrobienia (faza 3) | React + Vite, React Router, Pico CSS |
+| Frontend (GUI) | w budowie (faza 3) | React + Vite + TypeScript, React Router, CSS Modules + tokeny CSS; styl „Trouvaille” ([docs/design](docs/design/README.md)), WCAG 2.0 AA |
 | Testy E2E | do zrobienia (faza 4) | Playwright (Python) |
 | Jakość kodu | skonfigurowane | Ruff, **SonarQube (lokalnie, Docker)**, GitHub Actions |
 
@@ -23,6 +23,7 @@ a serwer i skaner uruchamia się przez Docker Compose – instrukcja w sekcji
 Instrukcje dla agentów AI i plan kolejnych faz: [AGENTS.md](AGENTS.md).
 Lista endpointów pod ekrany GUI: [docs/api.md](docs/api.md).
 Wymagania i analiza funkcjonalności: [docs/wymagania/](docs/wymagania/).
+Styl wizualny frontendu – makiety 11 ekranów, kolory, typografia, tokeny CSS: [docs/design/](docs/design/README.md).
 
 ---
 
@@ -131,6 +132,25 @@ Zmienne środowiskowe z prefiksem `MP_` (albo plik `backend/.env`, wzór w `back
 | `MP_AUTO_MIGRATE` | `true` | migracje przy starcie aplikacji |
 | `MP_CORS_ORIGINS` | `["http://localhost:5173", "http://127.0.0.1:5173"]` | adresy frontendu (Vite) |
 | `MP_EXTERNAL_API_TIMEOUT_SECONDS` | `5` | timeout zapytań do Open-Meteo, NBP i Wikipedii |
+
+---
+
+## Szybki start (frontend)
+
+Wymagany Node.js (z npm). Najpierw uruchom backend (`make run`), potem w drugim terminalu:
+
+```bash
+cd frontend
+npm install          # biblioteki (jednorazowo i po zmianie package.json)
+npm run dev          # http://localhost:5173
+npm run lint         # ESLint
+npx tsc -b           # sprawdzenie typów TypeScript
+```
+
+Zapytania na `/api/...` serwer Vite przekazuje do backendu na `http://127.0.0.1:8000`
+(proxy w `frontend/vite.config.ts`).
+
+Na ekranie logowania (`/logowanie`) można od razu założyć konto przyciskiem „Zarejestruj się”.
 
 ---
 
