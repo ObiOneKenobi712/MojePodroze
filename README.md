@@ -55,7 +55,7 @@ Z katalogu głównego repozytorium, **bez aktywowania venv**:
 | `make reset-db` | usuwa lokalną bazę i zdjęcia (pyta o potwierdzenie) |
 | `make sonar-up` / `make sonar` / `make sonar-down` | SonarQube: start serwera / analiza (wymaga `SONAR_TOKEN`) / stop |
 | `make mutation` | testy mutacyjne mutmut (Docker) |
-| `make docker-up` / `make docker-down` | backend w Dockerze |
+| `make docker-up` / `make docker-down` | backend i frontend w Dockerze |
 | `make clean` | usuwa cache i wygenerowane raporty |
 | `make help` | lista wszystkich poleceń |
 
@@ -157,11 +157,19 @@ Na ekranie logowania (`/logowanie`) można od razu założyć konto przyciskiem 
 ## Uruchomienie w Dockerze
 
 ```bash
-docker compose up -d --build       # backend na http://localhost:8000/docs
-docker compose logs -f backend
+docker compose up -d --build       # backend: http://localhost:8000/docs, frontend: http://localhost:5173
+docker compose ps                  # stan kontenerów (backend powinien być „healthy”)
+docker compose logs -f backend     # logi backendu
+docker compose logs -f frontend    # logi frontendu
 docker compose down                # dane zostają w wolumenie backend-data
-docker compose down -v             # usuń także bazę i zdjęcia
+docker compose down -v             # usuń także bazę i zdjęcia (czysta baza, np. przed testami E2E)
 ```
+
+Frontend w kontenerze działa na serwerze deweloperskim Vite (`npm run dev`, obraz z `frontend/Dockerfile`).
+Zapytania `/api` przekazuje do backendu pod adresem `http://backend:8000` – ustawia go zmienna
+`API_PROXY_TARGET` w `docker-compose.yml` (lokalnie, bez Dockera, nadal `http://127.0.0.1:8000`).
+Frontend startuje dopiero, gdy backend jest zdrowy (`HEALTHCHECK` w `backend/Dockerfile`).
+Po zmianie kodu frontendu obraz trzeba przebudować: `docker compose up -d --build`.
 
 ---
 
