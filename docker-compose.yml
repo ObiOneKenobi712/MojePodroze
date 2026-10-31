@@ -1,12 +1,12 @@
 # Moje podróże – uruchamianie lokalne.
 #
-#   docker compose up -d --build                     # backend: http://localhost:8000/docs
+#   docker compose up -d --build                     # backend :8000/docs, frontend: http://localhost:5173
 #   docker compose run --rm backend-dev              # wszystkie testy (pytest) w kontenerze
 #   docker compose run --rm backend-dev mutmut run   # testy mutacyjne (Linux w kontenerze)
 #   docker compose --profile sonar up -d             # SonarQube: http://localhost:9000
 #   docker compose run --rm sonar-scanner-backend    # analiza backendu (wymaga SONAR_TOKEN)
 #
-# Szczegóły: README.md. Frontend (React + Vite) zostanie dodany w kolejnej fazie (AGENTS.md).
+# Szczegóły: README.md. Frontend: serwer Vite (npm run dev), /api przekazuje do backendu (API_PROXY_TARGET).
 
 name: moje-podroze
 
@@ -21,6 +21,16 @@ services:
       MP_CORS_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173"]'
     volumes:
       - backend-data:/app/data # baza SQLite i zdjęcia przetrwają restart
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    environment:
+      API_PROXY_TARGET: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_healthy
 
   backend-dev:
     profiles: ["dev"]
