@@ -49,6 +49,28 @@
   white-space: nowrap;
 }
 
+/* „Ustaw jako okładkę” pod zdjęciem – mały przycisk poboczny */
+.setCover {
+  margin-top: 6px;
+  padding: 4px 10px;
+  border: 1px solid var(--color-btn-secondary-border);
+  border-radius: var(--radius-small);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.setCover:hover {
+  background: var(--color-divider);
+}
+
+.setCover:disabled {
+  cursor: wait;
+  opacity: 0.6;
+}
+
 /* Okrągły ołówek obok „×” – dzień i podpis zdjęcia */
 .edit {
   position: absolute;

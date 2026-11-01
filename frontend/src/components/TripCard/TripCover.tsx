@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { Photo } from "../../types/api";
 import { api } from "../../api/client";
 import styles from "./TripCard.module.css";
 
@@ -7,23 +6,25 @@ const PLACEHOLDERS = 5;
 
 interface Props {
   tripId: number;
+  /** `cover_photo_url` z podróży: wybrana okładka albo pierwsze zdjęcie; null – podróż bez zdjęć */
+  coverUrl: string | null;
   /** Klasa kontenera – domyślnie okładka karty; ekran szczegółów podaje własną (szeroki baner) */
   className?: string;
 }
 
-// Okładka: pierwsze zdjęcie podróży (GET /api/trips/{id}/photos → plik przez fetch → blob).
+// Okładka: plik z `cover_photo_url` (wymaga X-User-Id, więc fetch → blob).
 // Bez zdjęć albo przy błędzie zostaje kolor zastępczy. Dekoracja – opis podróży jest w tekście obok.
-export default function TripCover({ tripId, className = styles.cover }: Props) {
+export default function TripCover({ tripId, coverUrl, className = styles.cover }: Props) {
   const [src, setSrc] = useState<string | null>(null);
 
   useEffect(() => {
+    if (!coverUrl) return;
     let cancelled = false;
     let objectUrl: string | null = null;
     api
-      .get<Photo[]>(`/trips/${tripId}/photos`)
-      .then((photos) => (photos.length > 0 ? api.getBlob(photos[0].file_url) : null))
+      .getBlob(coverUrl)
       .then((blob) => {
-        if (!blob || cancelled) return;
+        if (cancelled) return;
         objectUrl = URL.createObjectURL(blob);
         setSrc(objectUrl);
       })
@@ -33,8 +34,9 @@ export default function TripCover({ tripId, className = styles.cover }: Props) {
     return () => {
       cancelled = true;
       if (objectUrl) URL.revokeObjectURL(objectUrl);
+      setSrc(null);
     };
-  }, [tripId]);
+  }, [coverUrl]);
 
   const placeholder = `var(--placeholder-${(tripId % PLACEHOLDERS) + 1})`;
   return (

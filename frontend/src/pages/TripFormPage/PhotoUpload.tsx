@@ -1,6 +1,6 @@
 import { useEffect, useId, useRef, useState } from "react";
 import type { ChangeEvent } from "react";
-import type { Photo } from "../../types/api";
+import type { Photo, Trip } from "../../types/api";
 import { api, ApiError } from "../../api/client";
 import { formatDate } from "../../utils/format";
 import TripCover from "../../components/TripCard/TripCover";
@@ -50,6 +50,8 @@ export default function PhotoUpload({ tripId, startDate, endDate }: Props) {
   const [progress, setProgress] = useState<{ done: number; total: number } | null>(null);
   const [result, setResult] = useState<string | null>(null);
   const [coverKey, setCoverKey] = useState(0);
+  // Okładka z podróży (GET /api/trips/{id}) – wczytywana od nowa po każdej zmianie zdjęć
+  const [cover, setCover] = useState<Pick<Trip, "cover_photo_id" | "cover_photo_url"> | null>(null);
   // Dzień albumu dla wybranej paczki zdjęć
   const [day, setDay] = useState(startDate);
   const [dayError, setDayError] = useState<string | null>(null);
@@ -59,6 +61,21 @@ export default function PhotoUpload({ tripId, startDate, endDate }: Props) {
   useEffect(() => {
     itemsRef.current = items;
   }, [items]);
+
+  useEffect(() => {
+    let cancelled = false;
+    api
+      .get<Trip>(`/trips/${tripId}`)
+      .then((trip) => {
+        if (!cancelled) setCover({ cover_photo_id: trip.cover_photo_id, cover_photo_url: trip.cover_photo_url });
+      })
+      .catch(() => {
+        // bez okładki zostaje kolor – zdjęcia i tak da się edytować
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [tripId, coverKey]);
 
   // Zwolnij podglądy z pamięci przy wyjściu z formularza
   useEffect(
@@ -135,12 +152,16 @@ export default function PhotoUpload({ tripId, startDate, endDate }: Props) {
       <h2 id={`${id}-heading`} className={styles.subtitle}>
         Zdjęcia
       </h2>
-      <TripCover key={coverKey} tripId={tripId} className={styles.photoCover} />
-      <p className={styles.hint}>Na okładce i na karcie podróży pokazuje się pierwsze zdjęcie z listy poniżej.</p>
+      <TripCover tripId={tripId} coverUrl={cover?.cover_photo_url ?? null} className={styles.photoCover} />
+      <p className={styles.hint}>
+        Na okładce i na karcie podróży pokazuje się pierwsze zdjęcie z listy poniżej, chyba że wybierzesz inne
+        przyciskiem „Ustaw jako okładkę”.
+      </p>
       <TripPhotos
         tripId={tripId}
         refreshKey={coverKey}
         editable
+        coverPhotoId={cover?.cover_photo_id ?? null}
         onChange={() => setCoverKey((k) => k + 1)}
         startDate={startDate}
         endDate={endDate}

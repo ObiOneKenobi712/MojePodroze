@@ -61,6 +61,10 @@ export interface Trip {
   allowed_transitions: TripStatus[];
   is_read_only: boolean;
   available_sections: Section[];
+  /** Wybrana okładka; null = pierwsze zdjęcie albumu */
+  cover_photo_id: number | null;
+  /** Plik okładki (wybranej albo pierwszego zdjęcia), wymaga X-User-Id; null bez zdjęć */
+  cover_photo_url: string | null;
 }
 
 export interface Countdown {

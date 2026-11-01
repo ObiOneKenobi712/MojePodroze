@@ -18,6 +18,8 @@ interface Props {
   /** Termin podróży – zakres dnia przy edycji zdjęcia */
   startDate?: string;
   endDate?: string;
+  /** Wybrana okładka (`cover_photo_id`); null – okładką jest pierwsze zdjęcie */
+  coverPhotoId?: number | null;
 }
 
 /** Kolejność jak w backendzie: dzień, potem kolejność dodania */
@@ -31,9 +33,19 @@ type LoadState =
   | { status: "error"; message: string };
 
 // Siatka wszystkich zdjęć podróży: GET /api/trips/{id}/photos, usuwanie: DELETE …/photos/{photoId}.
-export default function TripPhotos({ tripId, refreshKey = 0, editable = false, onChange, startDate, endDate }: Props) {
+export default function TripPhotos({
+  tripId,
+  refreshKey = 0,
+  editable = false,
+  onChange,
+  startDate,
+  endDate,
+  coverPhotoId = null,
+}: Props) {
   const [load, setLoad] = useState<LoadState>({ status: "loading" });
   const [deleteError, setDeleteError] = useState<string | null>(null);
+  const [coverError, setCoverError] = useState<string | null>(null);
+  const [savingCover, setSavingCover] = useState(false);
   const { confirm, confirmDialog } = useConfirm();
   const [editing, setEditing] = useState<Photo | null>(null);
 
@@ -83,6 +95,20 @@ export default function TripPhotos({ tripId, refreshKey = 0, editable = false, o
     }
   }
 
+  // PUT /api/trips/{id}/cover – wybrane zdjęcie staje się okładką (karta, szczegóły)
+  async function setCover(photo: Photo) {
+    setCoverError(null);
+    setSavingCover(true);
+    try {
+      await api.put(`/trips/${tripId}/cover`, { photo_id: photo.id });
+      onChange?.();
+    } catch (error) {
+      setCoverError(error instanceof ApiError ? error.message : "Nie udało się ustawić okładki.");
+    } finally {
+      setSavingCover(false);
+    }
+  }
+
   if (load.status === "loading") {
     return (
       <p className={styles.muted} role="status" data-testid="trip-photos-loading">
@@ -112,18 +138,41 @@ export default function TripPhotos({ tripId, refreshKey = 0, editable = false, o
           {deleteError}
         </p>
       )}
+      {coverError && (
+        <p className={styles.error} role="alert" data-testid="photo-cover-error">
+          {coverError}
+        </p>
+      )}
       <ul className={styles.grid} aria-label="Zdjęcia podróży" data-testid="trip-photo-list">
         {load.photos.map((photo, index) => {
           const label = photo.caption ?? `zdjęcie ${index + 1}`;
+          // Ta sama reguła co w backendzie: wybrana okładka, a bez wyboru – pierwsze zdjęcie
+          const isCover = coverPhotoId === null ? index === 0 : photo.id === coverPhotoId;
           return (
             <li key={photo.id} className={styles.item} data-testid={`photo-${photo.id}`}>
               <PhotoImage photo={photo} alt={photo.caption ?? `Zdjęcie ${index + 1} z podróży`} className={styles.image} />
-              {index === 0 && <span className={styles.badge}>Okładka</span>}
+              {isCover && (
+                <span className={styles.badge} data-testid={`photo-cover-badge-${photo.id}`}>
+                  Okładka
+                </span>
+              )}
               {editable && (
                 <p className={styles.meta} data-testid={`photo-day-${photo.id}`}>
                   {formatDate(photo.day)}
                   {photo.caption && <span className={styles.metaCaption}>{photo.caption}</span>}
                 </p>
+              )}
+              {editable && !isCover && (
+                <button
+                  type="button"
+                  className={styles.setCover}
+                  onClick={() => setCover(photo)}
+                  disabled={savingCover}
+                  aria-label={`Ustaw jako okładkę: ${label}`}
+                  data-testid={`btn-set-cover-${photo.id}`}
+                >
+                  Ustaw jako okładkę
+                </button>
               )}
               {editable && (
                 <button

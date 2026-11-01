@@ -307,6 +307,8 @@ album w zakładce „Przegląd”: `trip-album`, `album-loading`, `album-error`,
 dzień i podpis zdjęcia (edycja podróży): `input-upload-day`, `error-upload-day`, `photo-day-{id}`,
 `btn-edit-photo-{id}`, `photo-edit-dialog`, `input-photo-day`, `input-photo-caption`, `error-photo-day`,
 `error-photo-caption`, `photo-edit-error`, `btn-save-photo-edit`, `btn-cancel-photo-edit`,
+okładka (edycja podróży): `btn-set-cover-{id}` (przy zdjęciach, które nie są okładką), `photo-cover-badge-{id}`,
+`photo-cover-error`,
 `confirm-dialog` (okno potwierdzenia usunięcia, zamiast `window.confirm`), `btn-confirm-ok`, `btn-confirm-cancel`.
 
 ## Do dopilnowania

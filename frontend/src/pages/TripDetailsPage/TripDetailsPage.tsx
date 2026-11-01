@@ -209,7 +209,7 @@ export default function TripDetailsPage() {
       </Link>
 
       <figure className={styles.coverFigure}>
-        <TripCover tripId={trip.id} className={styles.cover} />
+        <TripCover tripId={trip.id} coverUrl={trip.cover_photo_url} className={styles.cover} />
         <figcaption className={styles.caption}>
           {trip.destination_city}, {trip.destination_country}
         </figcaption>

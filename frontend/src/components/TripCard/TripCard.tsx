@@ -21,7 +21,7 @@ export default function TripCard({ trip }: { trip: Trip }) {
           {trip.character.name}
         </p>
       </div>
-      <TripCover tripId={trip.id} />
+      <TripCover tripId={trip.id} coverUrl={trip.cover_photo_url} />
       {/* Strzałka na okładce: sygnał, że karta jest klikalna (dekoracja – link opisuje tytuł) */}
       <span className={styles.arrow} aria-hidden="true">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2">
