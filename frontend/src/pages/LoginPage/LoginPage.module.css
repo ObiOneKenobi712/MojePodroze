@@ -1,0 +1,169 @@
+/* Dwie kolumny jak w makiecie 1: panel z logo po lewej, formularz po prawej */
+.page {
+  min-height: 100vh;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+}
+
+.panel {
+  padding: 48px var(--page-padding);
+  background: var(--color-brand-panel);
+  color: var(--color-text-on-accent);
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  gap: 32px;
+}
+
+.logo {
+  font-family: var(--font-logo);
+  font-size: 42px;
+  line-height: 1;
+}
+
+.tagline {
+  font-size: 48px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.main {
+  padding: 48px var(--page-padding);
+  display: flex;
+  align-items: center;
+}
+
+.form {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.fieldGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+/* Etykieta pola WERSALIKAMI nad polem */
+.label {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+/* Pole: tylko linia pod spodem */
+.field {
+  width: 100%;
+  height: 40px;
+  padding: 0 2px;
+  border: 0;
+  border-bottom: 1px solid var(--color-field-line);
+  background: transparent;
+  font-size: 16px;
+  font-weight: 500;
+}
+
+.field[aria-invalid="true"] {
+  border-bottom-color: var(--color-error-text);
+}
+
+.fieldError {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--color-error-text);
+}
+
+.formError {
+  padding: 14px 18px;
+  border-radius: var(--radius-small);
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  font-weight: 500;
+}
+
+.actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.primary,
+.secondary {
+  height: 46px;
+  padding: 0 24px;
+  border-radius: var(--radius-button);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.primary {
+  border: 0;
+  background: var(--color-accent);
+  color: var(--color-text-on-accent);
+  transition: background-color 0.15s ease;
+}
+
+/* Najechanie myszką i fokus z klawiatury: ciemniejsza szałwia */
+.primary:hover:not(:disabled),
+.primary:focus-visible {
+  background: var(--color-accent-hover);
+}
+
+/* W chwili kliknięcia: jasna szałwia z ciemnym tekstem (biały na jasnym nie spełnia AA) */
+.primary:active:not(:disabled) {
+  background: var(--color-accent-active);
+  color: var(--color-text);
+}
+
+.secondary {
+  border: 1.5px solid var(--color-btn-secondary-border);
+  background: var(--color-surface);
+  color: var(--color-text);
+}
+
+.primary:disabled,
+.secondary:disabled {
+  cursor: wait;
+  opacity: 0.7;
+}
+
+.note {
+  font-size: 14px;
+  color: var(--color-text-muted);
+}
+
+/* Telefon: panel z logo jako pasek nad formularzem */
+@media (max-width: 800px) {
+  .page {
+    grid-template-columns: 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  .panel {
+    padding-block: 28px;
+  }
+
+  .logo {
+    font-size: 34px;
+  }
+
+  .tagline {
+    font-size: 24px;
+  }
+
+  .main {
+    align-items: flex-start;
+  }
+}

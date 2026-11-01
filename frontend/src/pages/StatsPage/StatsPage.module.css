@@ -1,0 +1,271 @@
+/* Statystyki: kafle z liczbami, dwa wykresy jednej serii, tabela */
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.header {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.title {
+  font-size: 36px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.muted {
+  color: var(--color-text-muted);
+}
+
+.empty {
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  color: var(--color-text-muted);
+}
+
+/* Kafle: etykieta WERSALIKAMI, duża liczba 700 / 34 px */
+.tiles {
+  margin: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+  gap: 16px;
+}
+
+.tile {
+  padding: 20px 22px;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.tile dt {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.tile dd {
+  margin: 8px 0 0;
+  font-size: 34px;
+  font-weight: 700;
+  line-height: 1.1;
+}
+
+.card {
+  padding: 24px;
+  border-radius: var(--radius-card);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.cardTitle {
+  font-size: 20px;
+  font-weight: 500;
+}
+
+/* Słupki pionowe (lata): ≤ 24 px szerokości, zaokrąglony tylko czubek, wspólna linia bazowa */
+.columns {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+  min-height: 200px;
+  border-bottom: 1px solid var(--color-divider);
+  overflow-x: auto;
+}
+
+.column {
+  flex: none;
+  min-width: 48px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+
+.columnValue {
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.columnTrack {
+  height: 150px;
+  display: flex;
+  align-items: flex-end;
+}
+
+.columnBar {
+  display: block;
+  width: 24px;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  background: var(--color-accent);
+}
+
+.columnLabel {
+  padding: 6px 0 8px;
+  font-size: 13px;
+  color: var(--color-text-muted);
+}
+
+/* Słupki poziome (charakter): nazwa po lewej, wartość na końcu słupka */
+.bars {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.barRow {
+  display: grid;
+  grid-template-columns: minmax(80px, 140px) 1fr;
+  align-items: center;
+  gap: 14px;
+}
+
+.barLabel {
+  font-weight: 500;
+  overflow-wrap: anywhere;
+}
+
+.barTrack {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 0;
+}
+
+.bar {
+  display: block;
+  min-width: 2px;
+  height: 20px;
+  border-radius: 0 4px 4px 0;
+  background: var(--color-accent);
+  transition: background-color 0.15s ease;
+}
+
+.barValue {
+  flex: none;
+  font-size: 14px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
+/* Podpowiedź po najechaniu (szczegóły są też w tabeli – dostępne bez myszy) */
+.tooltip {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 6px);
+  z-index: 1;
+  padding: 6px 10px;
+  border-radius: var(--radius-small);
+  background: var(--color-text);
+  color: var(--color-bg);
+  font-size: 13px;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.15s ease;
+}
+
+.barRow:hover .tooltip {
+  opacity: 1;
+}
+
+.barRow:hover .bar {
+  background: var(--color-accent-hover);
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 15px;
+}
+
+.table th,
+.table td {
+  padding: 10px 8px;
+  border-bottom: 1px solid var(--color-divider);
+  text-align: left;
+}
+
+.table thead th {
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-text-muted);
+}
+
+.table tbody th {
+  font-weight: 500;
+}
+
+/* Kolumny liczb wyrównane do prawej, cyfry równej szerokości */
+.num {
+  text-align: right !important;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
+.error {
+  padding: 14px 18px;
+  border-radius: var(--radius-small);
+  background: var(--color-error-bg);
+  color: var(--color-error-text);
+  font-weight: 500;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.secondary {
+  height: 46px;
+  padding: 0 24px;
+  border: 1.5px solid var(--color-btn-secondary-border);
+  border-radius: var(--radius-button);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.secondary:hover {
+  background: var(--color-divider);
+}
+
+@media (max-width: 640px) {
+  .title {
+    font-size: 30px;
+  }
+
+  .tile dd {
+    font-size: 28px;
+  }
+
+  .card {
+    padding: 18px;
+  }
+
+  .table {
+    display: block;
+    overflow-x: auto;
+  }
+}

@@ -1,0 +1,198 @@
+.header {
+  border-bottom: 1px solid var(--color-divider);
+}
+
+.inner {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 0 var(--page-padding);
+  min-height: 82px;
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+}
+
+.logo {
+  font-family: var(--font-logo);
+  font-size: 30px;
+  line-height: 1;
+  text-decoration: none;
+}
+
+/* Nawigacja + „Wyloguj” – na szerokim ekranie w jednym wierszu z logo */
+.menu {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 8px 32px;
+}
+
+.nav {
+  display: flex;
+  gap: 28px;
+}
+
+/* Przycisk ☰ – tylko na telefonie */
+.menuToggle {
+  display: none;
+}
+
+.navLink {
+  padding: 6px 0;
+  font-weight: 500;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.navLink:hover {
+  border-bottom-color: var(--color-divider);
+}
+
+.active {
+  font-weight: 600;
+  border-bottom-color: var(--color-accent);
+}
+
+.active:hover {
+  border-bottom-color: var(--color-accent);
+}
+
+/* Fokus w nagłówku jak w zakładkach: jasnozielone tło bez obwódki na osobnej warstwie, szersze od
+   napisu i nad kreską aktywnej pozycji (globalny fokus przylegałby do liter). */
+.logo,
+.navLink,
+.logout {
+  position: relative;
+  isolation: isolate;
+}
+
+.logo:focus-visible,
+.navLink:focus-visible,
+.logout:focus-visible {
+  outline: 2px solid transparent;
+  box-shadow: none;
+}
+
+/* Przy fokusie kreska aktywnej pozycji znika – zostaje samo tło (aktywność widać po pogrubieniu) */
+.navLink:focus-visible {
+  border-bottom-color: transparent;
+}
+
+.logo:focus-visible::before,
+.navLink:focus-visible::before,
+.logout:focus-visible::before {
+  content: "";
+  position: absolute;
+  inset: 0 -10px 4px;
+  z-index: -1;
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--focus-ring) 22%, transparent);
+}
+
+.logo:focus-visible::before {
+  inset: -4px -10px;
+}
+
+/* Przełącznik wyglądu po prawej, przed „Wyloguj” */
+.theme {
+  margin-left: auto;
+}
+
+.logout {
+  padding: 6px 0;
+  border: 0;
+  background: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.main {
+  max-width: var(--page-width);
+  margin: 0 auto;
+  padding: 44px var(--page-padding) 64px;
+}
+
+/* Telefon: logo + ☰, menu rozwijane pod nagłówkiem (pozycje jedna pod drugą, wysokie na palec) */
+@media (max-width: 640px) {
+  .inner {
+    min-height: 0;
+    padding-top: max(18px, env(safe-area-inset-top));
+    padding-bottom: 14px;
+    flex-wrap: wrap;
+    justify-content: space-between;
+  }
+
+  .menuToggle {
+    display: grid;
+    place-items: center;
+    width: 44px;
+    height: 44px;
+    margin-right: -8px;
+    border: 0;
+    border-radius: var(--radius-small);
+    background: none;
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .menuToggle:hover {
+    background: var(--color-divider);
+  }
+
+  .menu {
+    display: none;
+    flex: 1 1 100%;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    padding-top: 8px;
+    border-top: 1px solid var(--color-divider);
+    animation: menu-in 0.2s ease;
+  }
+
+  .menuOpen {
+    display: flex;
+  }
+
+  .nav {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .navLink,
+  .logout {
+    display: flex;
+    align-items: center;
+    min-height: 48px;
+    padding: 0;
+    border-bottom: 0;
+    text-align: left;
+  }
+
+  /* Aktywna pozycja: pogrubiona + szałwiowa kreska z lewej (zamiast pod napisem) */
+  .active {
+    padding-left: 12px;
+    box-shadow: inset 3px 0 0 var(--color-accent);
+  }
+
+  .theme {
+    margin-left: 0;
+  }
+
+  .logout {
+    width: 100%;
+    border-top: 1px solid var(--color-divider);
+  }
+
+  .main {
+    padding-top: 24px;
+  }
+}
+
+@keyframes menu-in {
+  from {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
