@@ -2,10 +2,13 @@ import { Link } from "react-router";
 import type { Trip } from "../../types/api";
 import { capitalize, formatDate } from "../../utils/format";
 import StatusLabel from "../StatusLabel/StatusLabel";
+import { useCityImage } from "../../hooks/useCityImage";
 import TripCover from "./TripCover";
 import styles from "./TripCard.module.css";
 
 export default function TripCard({ trip }: { trip: Trip }) {
+  // Bez własnych zdjęć – zdjęcie miasta z Wikipedii
+  const cityImage = useCityImage(trip.id, trip.destination_city, trip.cover_photo_url === null);
   return (
     <Link to={`/podroze/${trip.id}`} className={styles.card} data-testid="trip-card">
       <div className={styles.body}>
@@ -21,7 +24,7 @@ export default function TripCard({ trip }: { trip: Trip }) {
           {trip.character.name}
         </p>
       </div>
-      <TripCover tripId={trip.id} />
+      <TripCover tripId={trip.id} coverUrl={trip.cover_photo_url} cityImageUrl={cityImage?.image_url} />
       {/* Strzałka na okładce: sygnał, że karta jest klikalna (dekoracja – link opisuje tytuł) */}
       <span className={styles.arrow} aria-hidden="true">
         <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.2">

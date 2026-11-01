@@ -35,7 +35,7 @@ Model danych i architekturę projektujemy od razu pod pełny zakres, żeby etap 
 |---|---|
 | Backend (API, logika, baza) | Python, FastAPI, SQLAlchemy, SQLite, zdjęcia w katalogu na dysku |
 | Frontend (GUI w przeglądarce) | React + Vite, React Router, fetch, TypeScript, CSS Modules + tokeny CSS bez frameworka CSS (CSR, bez SSR) |
-| Zewnętrzne API | pogoda i wyszukiwanie miasta (Open-Meteo + jego geocoding, bez klucza), kursy walut (API NBP, bez klucza) |
+| Zewnętrzne API | pogoda i wyszukiwanie miasta (Open-Meteo + jego geocoding, bez klucza), kursy walut (API NBP, bez klucza), zdjęcie miasta celu podróży (REST API Wikipedii, bez klucza) |
 | Testy | pytest + pytest-cov, mutmut, Playwright (Python), Vitest dla frontendu, scenariusze manualne |
 | Jakość i uruchamianie | Ruff (+ ESLint na froncie), GitHub Actions, Docker Compose, lokalny SonarQube |
 | Dokumentacja | README.md, AGENTS.md, dokument scenariuszy testów manualnych |

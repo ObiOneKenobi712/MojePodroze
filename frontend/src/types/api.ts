@@ -61,6 +61,10 @@ export interface Trip {
   allowed_transitions: TripStatus[];
   is_read_only: boolean;
   available_sections: Section[];
+  /** Wybrana okładka; null = pierwsze zdjęcie albumu */
+  cover_photo_id: number | null;
+  /** Plik okładki (wybranej albo pierwszego zdjęcia), wymaga X-User-Id; null bez zdjęć */
+  cover_photo_url: string | null;
 }
 
 export interface Countdown {
@@ -124,7 +128,12 @@ export interface Place {
   trip_id: number;
   name: string;
   kind: PlaceKind;
+  /** Dzień atrakcji albo zameldowania w noclegu */
   visit_date: string;
+  /** Tylko nocleg: dzień wymeldowania; null = jedna noc */
+  check_out_date: string | null;
+  /** Liczba nocy noclegu; null dla atrakcji */
+  nights: number | null;
   cost: number;
   rating: number | null;
   note: string | null;
@@ -299,4 +308,12 @@ export interface Conversion {
   rate: number;
   amount_pln: number;
   effective_date: string;
+}
+
+/** Zdjęcie miasta celu z Wikipedii: GET /api/trips/{id}/city-image (404 – brak zdjęcia) */
+export interface CityImage {
+  /** Adres zewnętrzny – zwykłe <img src>, bez X-User-Id */
+  image_url: string;
+  /** Artykuł w Wikipedii – link „Źródło” pod zdjęciem */
+  source_url: string;
 }

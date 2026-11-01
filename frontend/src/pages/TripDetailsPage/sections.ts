@@ -3,7 +3,7 @@
 import type { DiaryEntry, Expense, Flight, Meal, PlaceKind, Place, PlanPoint, Transport } from "../../types/api";
 import type { SectionConfig } from "../../components/ItemSection/ItemSection";
 import type { ChecklistConfig } from "../../components/ChecklistSection/ChecklistSection";
-import { capitalize, formatDate, formatDateTime } from "../../utils/format";
+import { capitalize, formatDate, formatDateRange, formatDateTime, nightsLabel } from "../../utils/format";
 
 const MAX_FLIGHT_HOURS = 48;
 
@@ -42,7 +42,7 @@ export const FLIGHTS: SectionConfig<Flight> = {
     { name: "cost", label: "Koszt (PLN)", kind: "money", testKey: "cost" },
     { name: "rating", label: "Ocena", kind: "rating", testKey: "rating" },
   ],
-  // „Nie wcześniej niż wylot” jak w backendzie (FlightIn.check_times); limit 48 h tylko we frontendzie.
+  // Jak w backendzie: „nie wcześniej niż wylot” (FlightIn.check_times), najpóźniej 48 h po wylocie (FLIGHT_TOO_LONG).
   // Format "RRRR-MM-DDTGG:MM" da się porównać jak tekst.
   validate: (v) => {
     const errors: Record<string, string> = {};
@@ -53,6 +53,7 @@ export const FLIGHTS: SectionConfig<Flight> = {
     }
     return errors;
   },
+  errorFields: { FLIGHT_TOO_LONG: "arrival_at" },
   limits: (v) => ({
     arrival_at: v.departure_at ? { min: v.departure_at, max: addHours(v.departure_at, MAX_FLIGHT_HOURS) } : {},
   }),
@@ -147,6 +148,18 @@ const PLACE_KIND_LABEL: Record<PlaceKind, string> = {
   attraction: "Atrakcja",
 };
 
+/** Dzień wymeldowania; bez daty – dzień po zameldowaniu (jedna noc), jak `stay_end` w backendzie */
+function stayEnd(checkIn: string, checkOut: string | null): string {
+  return checkOut || addDays(checkIn, 1);
+}
+
+/** Termin pozycji na liście: nocleg „21.09–28.09.2026 · 7 nocy”, atrakcja – jedna data */
+function placeDates(p: Place): string[] {
+  if (p.kind !== "accommodation") return [formatDate(p.visit_date)];
+  const end = stayEnd(p.visit_date, p.check_out_date);
+  return [formatDateRange(p.visit_date, end), nightsLabel(p.nights ?? 1)];
+}
+
 export const PLACES: SectionConfig<Place> = {
   path: "places",
   title: "Noclegi i atrakcje",
@@ -174,27 +187,62 @@ export const PLACES: SectionConfig<Place> = {
       requiredMessage: "Wybierz rodzaj.",
       options: (d) => d.place_kinds.map((k) => ({ value: k.value, label: capitalize(k.label) })),
     },
-    { name: "visit_date", label: "Data", kind: "date", testKey: "date", required: true, requiredMessage: "Podaj datę." },
+    {
+      name: "visit_date",
+      label: "Data",
+      labelWhen: (v) => (v.kind === "accommodation" ? "Zameldowanie" : "Data"),
+      kind: "date",
+      testKey: "date",
+      required: true,
+      requiredMessage: "Podaj datę.",
+    },
+    // Tylko nocleg; puste = jedna noc. Kalendarz: od dnia po zameldowaniu do ostatniego dnia podróży (limits)
+    {
+      name: "check_out_date",
+      label: "Wymeldowanie (opcjonalnie)",
+      kind: "date",
+      testKey: "check-out",
+      visibleWhen: (v) => v.kind === "accommodation",
+    },
     { name: "cost", label: "Koszt (PLN)", kind: "money", testKey: "cost" },
     { name: "rating", label: "Ocena", kind: "rating", testKey: "rating" },
     { name: "note", label: "Notatka (opcjonalnie)", kind: "textarea", testKey: "note", maxLength: 2000 },
   ],
-  // Jeden nocleg na noc (atrakcji może być kilka) – tylko we frontendzie, backend tego nie sprawdza
+  // Jak w backendzie (PlaceIn, domain/stays.py): wymeldowanie po zameldowaniu, jeden nocleg na noc –
+  // pobyty [zameldowanie, wymeldowanie) nie mogą się nakładać (21–28 i 28–30 są OK). Atrakcji może być kilka.
   validate: (v, items, editingId) => {
     const errors: Record<string, string> = {};
     if (v.kind !== "accommodation" || !v.visit_date) return errors;
-    const taken = items.find((p) => p.kind === "accommodation" && p.visit_date === v.visit_date && p.id !== editingId);
+    if (v.check_out_date && v.check_out_date <= v.visit_date) {
+      errors.check_out_date = "Wymeldowanie musi być później niż zameldowanie.";
+      return errors;
+    }
+    const end = stayEnd(v.visit_date, v.check_out_date);
+    const taken = items.find(
+      (p) =>
+        p.kind === "accommodation" &&
+        p.id !== editingId &&
+        p.visit_date < end &&
+        v.visit_date < stayEnd(p.visit_date, p.check_out_date),
+    );
     if (taken)
-      errors.visit_date = `Na ${formatDate(v.visit_date)} jest już nocleg „${taken.name}”. Wybierz inny dzień albo edytuj tamten nocleg.`;
+      errors.visit_date = `W tym terminie jest już nocleg „${taken.name}” (${placeDates(taken)[0]}). Zmień daty albo edytuj tamten nocleg.`;
     return errors;
   },
-  // Kopia noclegu = zwykle kolejna noc w tym samym miejscu
-  copyValues: (v) => (v.kind === "accommodation" && v.visit_date ? { ...v, visit_date: addDays(v.visit_date, 1) } : v),
+  errorFields: { ACCOMMODATION_OVERLAP: "visit_date" },
+  limits: (v) => ({
+    check_out_date: v.visit_date ? { min: addDays(v.visit_date, 1) } : {},
+  }),
+  // Kopia noclegu = kolejny pobyt od dnia wymeldowania (jedna noc – wymeldowanie do uzupełnienia)
+  copyValues: (v) =>
+    v.kind === "accommodation" && v.visit_date
+      ? { ...v, visit_date: stayEnd(v.visit_date, v.check_out_date), check_out_date: "" }
+      : v,
   itemTitle: (p) => p.name,
-  itemMeta: (p) => [PLACE_KIND_LABEL[p.kind], formatDate(p.visit_date)],
+  itemMeta: (p) => [PLACE_KIND_LABEL[p.kind], ...placeDates(p)],
   itemRating: (p) => p.rating,
   itemNote: (p) => p.note,
-  removeMessage: (p) => `„${p.name}” (${PLACE_KIND_LABEL[p.kind].toLowerCase()}, ${formatDate(p.visit_date)})`,
+  removeMessage: (p) => `„${p.name}” (${PLACE_KIND_LABEL[p.kind].toLowerCase()}, ${placeDates(p).join(", ")})`,
 };
 
 export const EXPENSES: SectionConfig<Expense> = {

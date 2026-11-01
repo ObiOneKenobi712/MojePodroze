@@ -236,7 +236,8 @@ Elementy interaktywne mają `data-testid`, np. `trip-card`, `status-tab-all`, `s
 `input-trip-end`, `select-trip-type`, `select-trip-character`, `btn-save-trip`, `btn-cancel-trip`,
 `trip-form-error`, `trip-form-loading`, `trip-form-load-error`, `trip-form-retry`,
 `error-{pole}` przy polu formularza podróży (np. `error-name`, `error-destination-city`, `error-end-date`,
-`error-start-date`), `trip-cover-photo` (zdjęcie na karcie podróży),
+`error-start-date`), `trip-cover-photo` (zdjęcie na karcie podróży), `trip-city-image` (zdjęcie miasta z Wikipedii, gdy podróż nie ma zdjęć),
+`link-city-image-source` (link „Zdjęcie: Wikipedia” pod banerem w szczegółach),
 `trip-details`, `trip-details-loading`, `trip-details-error`, `trip-details-retry`, `trip-details-title`, `link-back`,
 `btn-status-{status}` (np. `btn-status-in-progress`, `btn-status-planned`), `status-error`,
 `trip-readonly-notice`, `trip-budget`, `section-panel`, `section-tab-{zakładka}` (`przeglad`, `plan`, `loty`,
@@ -258,9 +259,10 @@ transport (ten sam wzór co posiłki – `ItemSection`): `transports-section`, `
 `transport-delete-error`,
 noclegi i atrakcje (`ItemSection`, prefiks `place`/`places`): `places-section`, `places-loading`, `places-error`,
 `places-retry`, `places-empty`, `place-list`, `place-{id}`, `places-total`, `btn-add-place`, `place-form`,
-`input-place-name`, `select-place-kind`, `input-place-date`, `input-place-cost`, `select-place-rating`,
+`input-place-name`, `select-place-kind`, `input-place-date` (przy noclegu „Zameldowanie”),
+`input-place-check-out` (tylko nocleg, opcjonalne), `input-place-cost`, `select-place-rating`,
 `input-place-note`, `btn-save-place`, `btn-cancel-place`, `place-form-error`, `error-place-{pole}`
-(np. `error-place-visit-date`), `btn-edit-place-{id}`, `btn-delete-place-{id}`, `place-delete-error`,
+(np. `error-place-visit-date`, `error-place-check-out-date`), `btn-edit-place-{id}`, `btn-delete-place-{id}`, `place-delete-error`,
 wydatki inne (`ItemSection`, prefiks `expense`/`expenses`, bez oceny): `expenses-section`, `expenses-loading`,
 `expenses-error`, `expenses-retry`, `expenses-empty`, `expense-list`, `expense-{id}`, `expenses-total`, `btn-add-expense`,
 `expense-form`, `input-expense-description`, `select-expense-category`, `input-expense-date`, `input-expense-cost`,
@@ -307,6 +309,8 @@ album w zakładce „Przegląd”: `trip-album`, `album-loading`, `album-error`,
 dzień i podpis zdjęcia (edycja podróży): `input-upload-day`, `error-upload-day`, `photo-day-{id}`,
 `btn-edit-photo-{id}`, `photo-edit-dialog`, `input-photo-day`, `input-photo-caption`, `error-photo-day`,
 `error-photo-caption`, `photo-edit-error`, `btn-save-photo-edit`, `btn-cancel-photo-edit`,
+okładka (edycja podróży): `btn-set-cover-{id}` (przy zdjęciach, które nie są okładką), `photo-cover-badge-{id}`,
+`photo-cover-error`,
 `confirm-dialog` (okno potwierdzenia usunięcia, zamiast `window.confirm`), `btn-confirm-ok`, `btn-confirm-cancel`.
 
 ## Do dopilnowania
