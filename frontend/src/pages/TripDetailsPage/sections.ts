@@ -42,7 +42,7 @@ export const FLIGHTS: SectionConfig<Flight> = {
     { name: "cost", label: "Koszt (PLN)", kind: "money", testKey: "cost" },
     { name: "rating", label: "Ocena", kind: "rating", testKey: "rating" },
   ],
-  // „Nie wcześniej niż wylot” jak w backendzie (FlightIn.check_times); limit 48 h tylko we frontendzie.
+  // Jak w backendzie: „nie wcześniej niż wylot” (FlightIn.check_times), najpóźniej 48 h po wylocie (FLIGHT_TOO_LONG).
   // Format "RRRR-MM-DDTGG:MM" da się porównać jak tekst.
   validate: (v) => {
     const errors: Record<string, string> = {};
@@ -53,6 +53,7 @@ export const FLIGHTS: SectionConfig<Flight> = {
     }
     return errors;
   },
+  errorFields: { FLIGHT_TOO_LONG: "arrival_at" },
   limits: (v) => ({
     arrival_at: v.departure_at ? { min: v.departure_at, max: addHours(v.departure_at, MAX_FLIGHT_HOURS) } : {},
   }),
@@ -228,6 +229,7 @@ export const PLACES: SectionConfig<Place> = {
       errors.visit_date = `W tym terminie jest już nocleg „${taken.name}” (${placeDates(taken)[0]}). Zmień daty albo edytuj tamten nocleg.`;
     return errors;
   },
+  errorFields: { ACCOMMODATION_OVERLAP: "visit_date" },
   limits: (v) => ({
     check_out_date: v.visit_date ? { min: addDays(v.visit_date, 1) } : {},
   }),

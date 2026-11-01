@@ -75,6 +75,9 @@ export interface SectionConfig<T extends Item> {
   validate?: (values: Record<string, string>, items: T[], editingId: number | null) => Record<string, string>;
   /** Zmiana wartości przy „Kopiuj” (np. nocleg → następny dzień) */
   copyValues?: (values: Record<string, string>) => Record<string, string>;
+  /** Kod błędu z API → pole, przy którym pokazać komunikat backendu (np. FLIGHT_TOO_LONG → arrival_at).
+      DATE_OUTSIDE_TRIP bez wpisu trafia do pierwszego pola daty w terminie podróży. */
+  errorFields?: Record<string, string>;
   /** Zakres w kalendarzu zależny od innych pól (np. przylot: od wylotu do wylotu + 48 h) */
   limits?: (values: Record<string, string>) => Record<string, { min?: string; max?: string }>;
   /** Pierwsza linia pozycji (pogrubiona); pusty tekst = bez tytułu */
@@ -114,8 +117,8 @@ function tripRange(field: FieldDef, startDate: string, endDate: string): { min?:
   return {};
 }
 
-// Te same zasady co w backendzie (backend/app/schemas/items.py) – tu, żeby pokazać błąd po polsku przy polu.
-// Dodatkowo daty w terminie podróży (backend tego nie sprawdza – to pomoc przy wpisywaniu).
+// Te same zasady co w backendzie (schemas/items.py, DATE_OUTSIDE_TRIP w services/children.py) – tu, żeby
+// pokazać błąd po polsku przy polu, zanim formularz zostanie wysłany.
 function validate(fields: FieldDef[], values: Values, startDate: string, endDate: string): Errors {
   const errors: Errors = {};
   for (const field of fields) {
@@ -308,9 +311,16 @@ export default function ItemSection<T extends Item>({
       setLoad({ status: "ready", items, dict });
       setMode({ kind: "closed" });
     } catch (error) {
-      if (error instanceof ApiError && error.errors.length > 0) {
+      if (error instanceof ApiError) {
         const serverErrors: Errors = {};
         for (const e of error.errors) serverErrors[e.field] = "Nieprawidłowa wartość.";
+        // Reguła biznesowa (np. data poza terminem, nakładające się noclegi) – komunikat backendu przy polu
+        const field =
+          config.errorFields?.[error.code] ??
+          (error.code === "DATE_OUTSIDE_TRIP"
+            ? fields.find((f) => (f.kind === "date" || f.kind === "datetime") && !f.anyDate)?.name
+            : undefined);
+        if (field) serverErrors[field] = error.message;
         setFieldErrors(serverErrors);
       }
       setFormError(error instanceof ApiError ? error.message : texts.saveError);
