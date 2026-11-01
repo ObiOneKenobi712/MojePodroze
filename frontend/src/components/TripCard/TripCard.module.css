@@ -81,6 +81,19 @@
   animation: cover-in 0.35s ease;
 }
 
+/* Podpis zdjęcia miasta z Wikipedii (licencja wymaga źródła) – lewy dolny róg, strzałka jest po prawej */
+.credit {
+  position: absolute;
+  left: 8px;
+  bottom: 8px;
+  padding: 2px 8px;
+  border-radius: var(--radius-small);
+  background: color-mix(in srgb, var(--color-surface) 85%, transparent);
+  color: var(--color-text);
+  font-size: 11px;
+  font-weight: 600;
+}
+
 /* Zdjęcie wyłania się płynnie z koloru zastępczego, zamiast „wskakiwać” */
 @keyframes cover-in {
   from {

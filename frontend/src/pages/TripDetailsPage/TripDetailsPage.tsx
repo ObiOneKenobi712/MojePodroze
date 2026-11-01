@@ -9,6 +9,7 @@ import TripCover from "../../components/TripCard/TripCover";
 import TripAlbum from "../../components/TripAlbum/TripAlbum";
 import { useTabIndicator } from "../../hooks/useTabIndicator";
 import { useConfirm } from "../../hooks/useConfirm";
+import { useCityImage } from "../../hooks/useCityImage";
 import ItemSection from "../../components/ItemSection/ItemSection";
 import ChecklistSection from "../../components/ChecklistSection/ChecklistSection";
 import CostSummaryPanel from "./CostSummaryPanel";
@@ -74,6 +75,12 @@ export default function TripDetailsPage() {
 
   // Zakładki liczymy przed wczesnymi `return` (hooki muszą być wywoływane zawsze w tej samej kolejności)
   const loadedTrip = load.status === "ready" ? load.trip : null;
+  // Bez własnych zdjęć – zdjęcie miasta z Wikipedii (link do źródła pod banerem)
+  const cityImage = useCityImage(
+    loadedTrip?.id ?? 0,
+    loadedTrip?.destination_city ?? "",
+    loadedTrip !== null && loadedTrip.cover_photo_url === null,
+  );
   const tabs = loadedTrip
     ? TABS.filter((tab) => !tab.section || loadedTrip.available_sections.includes(tab.section))
     : [];
@@ -209,9 +216,28 @@ export default function TripDetailsPage() {
       </Link>
 
       <figure className={styles.coverFigure}>
-        <TripCover tripId={trip.id} coverUrl={trip.cover_photo_url} className={styles.cover} />
+        <TripCover
+          tripId={trip.id}
+          coverUrl={trip.cover_photo_url}
+          cityImageUrl={cityImage?.image_url}
+          className={styles.cover}
+        />
         <figcaption className={styles.caption}>
           {trip.destination_city}, {trip.destination_country}
+          {cityImage && (
+            <>
+              <span aria-hidden="true"> · </span>
+              <a
+                href={cityImage.source_url}
+                target="_blank"
+                rel="noreferrer"
+                className={styles.captionLink}
+                data-testid="link-city-image-source"
+              >
+                Zdjęcie: Wikipedia<span className="visually-hidden"> (otwiera się w nowej karcie)</span>
+              </a>
+            </>
+          )}
         </figcaption>
       </figure>
 

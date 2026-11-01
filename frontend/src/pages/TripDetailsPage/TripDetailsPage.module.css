@@ -69,6 +69,15 @@
   color: var(--color-text-muted);
 }
 
+.captionLink {
+  color: var(--color-text-muted);
+  text-underline-offset: 3px;
+}
+
+.captionLink:hover {
+  color: var(--color-text);
+}
+
 .header {
   display: flex;
   flex-wrap: wrap;

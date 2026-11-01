@@ -309,3 +309,11 @@ export interface Conversion {
   amount_pln: number;
   effective_date: string;
 }
+
+/** Zdjęcie miasta celu z Wikipedii: GET /api/trips/{id}/city-image (404 – brak zdjęcia) */
+export interface CityImage {
+  /** Adres zewnętrzny – zwykłe <img src>, bez X-User-Id */
+  image_url: string;
+  /** Artykuł w Wikipedii – link „Źródło” pod zdjęciem */
+  source_url: string;
+}
