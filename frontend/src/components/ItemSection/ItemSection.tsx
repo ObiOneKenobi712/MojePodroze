@@ -36,6 +36,15 @@ export interface FieldDef {
   numeric?: boolean;
   /** Wartość pola z pozycji z API, gdy nazwa się różni (np. transport_mean.id → transport_mean_id) */
   fromItem?: (item: never) => string | number | null;
+  /** Pole widoczne tylko przy pewnych wartościach innych pól (np. wymeldowanie tylko dla noclegu);
+      ukryte pole nie jest sprawdzane i trafia do API jako null */
+  visibleWhen?: (values: Record<string, string>) => boolean;
+  /** Etykieta zależna od innych pól (np. „Zameldowanie” dla noclegu, „Data” dla atrakcji) */
+  labelWhen?: (values: Record<string, string>) => string;
+}
+
+function isVisible(field: FieldDef, values: Record<string, string>): boolean {
+  return !field.visibleWhen || field.visibleWhen(values);
 }
 
 /** Pozycja z API: zawsze ma id; koszt tylko w sekcjach kosztowych */
@@ -110,6 +119,7 @@ function tripRange(field: FieldDef, startDate: string, endDate: string): { min?:
 function validate(fields: FieldDef[], values: Values, startDate: string, endDate: string): Errors {
   const errors: Errors = {};
   for (const field of fields) {
+    if (!isVisible(field, values)) continue;
     const value = values[field.name].trim();
     if (field.kind === "money") {
       if (!COST_PATTERN.test(value)) errors[field.name] = "Podaj kwotę, np. 45 albo 45,50.";
@@ -134,7 +144,7 @@ function toInput(fields: FieldDef[], values: Values): Record<string, unknown> {
   for (const field of fields) {
     const value = values[field.name].trim();
     if (field.kind === "money") input[field.name] = Number(value.replace(",", "."));
-    else if (value === "") input[field.name] = null;
+    else if (value === "" || !isVisible(field, values)) input[field.name] = null;
     else if (field.kind === "rating" || field.numeric) input[field.name] = Number(value);
     else input[field.name] = value;
   }
@@ -347,7 +357,7 @@ export default function ItemSection<T extends Item>({
         className={field.kind === "textarea" ? `${styles.fieldGroup} ${styles.wide}` : styles.fieldGroup}
       >
         <label htmlFor={id} className={styles.label}>
-          {field.label}
+          {field.labelWhen ? field.labelWhen(values) : field.label}
         </label>
         {field.kind === "rating" ? (
           <select {...common} onChange={(e) => set(field.name, e.target.value)}>
@@ -541,7 +551,7 @@ export default function ItemSection<T extends Item>({
               {formError}
             </p>
           )}
-          <div className={styles.grid}>{fields.map(renderField)}</div>
+          <div className={styles.grid}>{fields.filter((f) => isVisible(f, values)).map(renderField)}</div>
           <div className={styles.actions}>
             <button
               type="button"

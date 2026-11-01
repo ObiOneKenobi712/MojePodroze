@@ -4,6 +4,21 @@ export function formatDate(iso: string): string {
   return `${day}.${month}.${year}`;
 }
 
+/** "2026-09-21", "2026-09-28" → "21.09–28.09.2026"; różne lata → pełne daty obu dni */
+export function formatDateRange(from: string, to: string): string {
+  if (from.slice(0, 4) !== to.slice(0, 4)) return `${formatDate(from)} – ${formatDate(to)}`;
+  return `${formatDate(from).slice(0, 5)}–${formatDate(to)}`;
+}
+
+/** 1 noc, 2–4 noce, 5+ nocy (12–14 nocy) */
+export function nightsLabel(count: number): string {
+  const lastTwo = count % 100;
+  const last = count % 10;
+  if (count === 1) return "1 noc";
+  if (last >= 2 && last <= 4 && (lastTwo < 12 || lastTwo > 14)) return `${count} noce`;
+  return `${count} nocy`;
+}
+
 /** "2026-09-21T10:30:00" → "21.09.2026, 10:30" */
 export function formatDateTime(iso: string): string {
   const [date, time = ""] = iso.split("T");

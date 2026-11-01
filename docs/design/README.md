@@ -258,9 +258,10 @@ transport (ten sam wzór co posiłki – `ItemSection`): `transports-section`, `
 `transport-delete-error`,
 noclegi i atrakcje (`ItemSection`, prefiks `place`/`places`): `places-section`, `places-loading`, `places-error`,
 `places-retry`, `places-empty`, `place-list`, `place-{id}`, `places-total`, `btn-add-place`, `place-form`,
-`input-place-name`, `select-place-kind`, `input-place-date`, `input-place-cost`, `select-place-rating`,
+`input-place-name`, `select-place-kind`, `input-place-date` (przy noclegu „Zameldowanie”),
+`input-place-check-out` (tylko nocleg, opcjonalne), `input-place-cost`, `select-place-rating`,
 `input-place-note`, `btn-save-place`, `btn-cancel-place`, `place-form-error`, `error-place-{pole}`
-(np. `error-place-visit-date`), `btn-edit-place-{id}`, `btn-delete-place-{id}`, `place-delete-error`,
+(np. `error-place-visit-date`, `error-place-check-out-date`), `btn-edit-place-{id}`, `btn-delete-place-{id}`, `place-delete-error`,
 wydatki inne (`ItemSection`, prefiks `expense`/`expenses`, bez oceny): `expenses-section`, `expenses-loading`,
 `expenses-error`, `expenses-retry`, `expenses-empty`, `expense-list`, `expense-{id}`, `expenses-total`, `btn-add-expense`,
 `expense-form`, `input-expense-description`, `select-expense-category`, `input-expense-date`, `input-expense-cost`,

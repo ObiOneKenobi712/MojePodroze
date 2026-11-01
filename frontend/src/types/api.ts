@@ -128,7 +128,12 @@ export interface Place {
   trip_id: number;
   name: string;
   kind: PlaceKind;
+  /** Dzień atrakcji albo zameldowania w noclegu */
   visit_date: string;
+  /** Tylko nocleg: dzień wymeldowania; null = jedna noc */
+  check_out_date: string | null;
+  /** Liczba nocy noclegu; null dla atrakcji */
+  nights: number | null;
   cost: number;
   rating: number | null;
   note: string | null;
