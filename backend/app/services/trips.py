@@ -1,7 +1,7 @@
 from collections.abc import Sequence
 
 from sqlalchemy import func, select
-from sqlalchemy.orm import Session
+from sqlalchemy.orm import Session, selectinload
 
 from app.core.errors import NotFoundError
 from app.db.models import PackingItem, Trip, TripCharacter, TripItem, User
@@ -11,13 +11,15 @@ from app.domain.trip_types import ensure_type_change_allowed, missing_default_pa
 from app.schemas.trips import TripIn
 from app.services.dictionaries import ensure_entry_exists
 from app.services.photo_storage import PhotoStorage
+from app.services.photos import get_photo
 
 TRIP_NOT_FOUND_MESSAGE = "Nie znaleziono podróży."
 UNKNOWN_CHARACTER_MESSAGE = "Wybrany charakter podróży nie istnieje."
 
 
 def list_trips(db: Session, user: User, status: TripStatus | None = None) -> Sequence[Trip]:
-    query = select(Trip).where(Trip.owner_id == user.id)
+    # Zdjęcia od razu (jedno zapytanie), bo TripOut wylicza z nich okładkę.
+    query = select(Trip).where(Trip.owner_id == user.id).options(selectinload(Trip.photos))
     if status is not None:
         query = query.where(Trip.status == status)
     return db.scalars(query.order_by(Trip.start_date, Trip.id)).all()
@@ -80,6 +82,17 @@ def delete_trip(db: Session, trip: Trip, storage: PhotoStorage) -> None:
 def change_status(db: Session, trip: Trip, target: TripStatus) -> Trip:
     ensure_transition_allowed(trip.status, target)
     trip.status = target
+    db.commit()
+    db.refresh(trip)
+    return trip
+
+
+def set_cover(db: Session, trip: Trip, photo_id: int | None) -> Trip:
+    """Ustawia okładkę (zdjęcie tej podróży) albo przywraca domyślną (``None``)."""
+    ensure_editable(trip.status)
+    if photo_id is not None:
+        get_photo(db, trip, photo_id)  # zdjęcie innej podróży → 404
+    trip.cover_photo_id = photo_id
     db.commit()
     db.refresh(trip)
     return trip

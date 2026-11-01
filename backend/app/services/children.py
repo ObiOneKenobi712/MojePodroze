@@ -7,6 +7,7 @@ Wszystkie operacje zapisu sprawdzają regułę „archiwum tylko do odczytu”.
 
 from collections.abc import Callable, Sequence
 from dataclasses import dataclass
+from datetime import date
 from typing import Any
 
 from sqlalchemy import select
@@ -29,10 +30,11 @@ from app.db.models import (
 from app.db.models import (
     Transport as TransportModel,
 )
-from app.domain.common import ensure_date_within_trip
-from app.domain.enums import Section
+from app.domain.common import ensure_date_within_trip, ensure_flight_duration
+from app.domain.enums import PlaceKind, Section
 from app.domain.items import ensure_section_allowed
 from app.domain.status import ensure_editable
+from app.domain.stays import Stay, ensure_check_out_within_trip, ensure_no_overlapping_stays
 from app.services.dictionaries import ensure_entry_exists
 
 Validator = Callable[[Session, Trip, Any], None]
@@ -99,9 +101,42 @@ def delete_child(db: Session, resource: ChildResource, trip: Trip, child_id: int
 # --- Dodatkowe walidacje --------------------------------------------------------------------
 
 
-def _validate_transport(db: Session, _trip: Trip, transport: TransportModel) -> None:
+def _ensure_within_trip(day: date, trip: Trip) -> None:
+    ensure_date_within_trip(day, trip.start_date, trip.end_date)
+
+
+def _validate_flight(_db: Session, trip: Trip, flight: Flight) -> None:
+    # Przylot może wypaść po końcu podróży (lot nocny), więc w terminie musi być tylko wylot.
+    _ensure_within_trip(flight.departure_at.date(), trip)
+    ensure_flight_duration(flight.departure_at, flight.arrival_at)
+
+
+def _validate_transport(db: Session, trip: Trip, transport: TransportModel) -> None:
     ensure_entry_exists(
         db, TransportMean, transport.transport_mean_id, "Wybrany środek transportu nie istnieje."
+    )
+    _ensure_within_trip(transport.travel_date, trip)
+
+
+def _validate_meal(_db: Session, trip: Trip, meal: Meal) -> None:
+    _ensure_within_trip(meal.meal_date, trip)
+
+
+def _validate_place(db: Session, trip: Trip, place: Place) -> None:
+    _ensure_within_trip(place.visit_date, trip)
+    if place.kind is not PlaceKind.ACCOMMODATION:
+        return
+    ensure_check_out_within_trip(place.check_out_date, trip.end_date)
+    query = select(Place).where(Place.trip_id == trip.id, Place.kind == PlaceKind.ACCOMMODATION)
+    if place.id is not None:  # przy edycji pomijamy samą edytowaną pozycję
+        query = query.where(Place.id != place.id)
+    others = db.scalars(query).all()
+    ensure_no_overlapping_stays(_stay(place), [_stay(other) for other in others])
+
+
+def _stay(place: Place) -> Stay:
+    return Stay(
+        id=place.id, name=place.name, check_in=place.visit_date, check_out=place.check_out_date
     )
 
 
@@ -112,7 +147,11 @@ def _validate_expense(db: Session, _trip: Trip, expense: Expense) -> None:
 
 
 def _validate_plan_point(_db: Session, trip: Trip, point: DayPlanPoint) -> None:
-    ensure_date_within_trip(point.day, trip.start_date, trip.end_date)
+    _ensure_within_trip(point.day, trip)
+
+
+def _validate_diary_entry(_db: Session, trip: Trip, entry: DiaryEntry) -> None:
+    _ensure_within_trip(entry.entry_date, trip)
 
 
 # --- Definicje zasobów ----------------------------------------------------------------------
@@ -122,6 +161,7 @@ FLIGHTS = ChildResource(
     order_by=(Flight.departure_at, Flight.id),
     not_found_message="Nie znaleziono lotu.",
     section=Section.FLIGHTS,
+    validate=_validate_flight,
 )
 TRANSPORTS = ChildResource(
     model=TransportModel,
@@ -135,12 +175,14 @@ MEALS = ChildResource(
     order_by=(Meal.meal_date, Meal.id),
     not_found_message="Nie znaleziono posiłku.",
     section=Section.MEALS,
+    validate=_validate_meal,
 )
 PLACES = ChildResource(
     model=Place,
     order_by=(Place.visit_date, Place.id),
     not_found_message="Nie znaleziono noclegu ani atrakcji.",
     section=Section.PLACES,
+    validate=_validate_place,
 )
 EXPENSES = ChildResource(
     model=Expense,
@@ -169,4 +211,5 @@ DIARY = ChildResource(
     model=DiaryEntry,
     order_by=(DiaryEntry.entry_date, DiaryEntry.id),
     not_found_message="Nie znaleziono wpisu w pamiętniku.",
+    validate=_validate_diary_entry,
 )

@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from app.domain.enums import Currency
 from app.schemas.common import ApiModel, DecimalOut
@@ -51,3 +51,8 @@ class ConversionOut(BaseModel):
     rate: DecimalOut
     amount_pln: DecimalOut
     effective_date: date
+
+
+class CityImageOut(ApiModel):
+    image_url: str = Field(description="Adres miniatury (zewnętrzny, bez nagłówka X-User-Id).")
+    source_url: str = Field(description="Artykuł w Wikipedii – link „Źródło” pod zdjęciem.")

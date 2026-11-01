@@ -35,7 +35,7 @@ Model danych i architekturę projektujemy od razu pod pełny zakres, żeby etap 
 |---|---|
 | Backend (API, logika, baza) | Python, FastAPI, SQLAlchemy, SQLite, zdjęcia w katalogu na dysku |
 | Frontend (GUI w przeglądarce) | React + Vite, React Router, fetch, TypeScript, CSS Modules + tokeny CSS bez frameworka CSS (CSR, bez SSR) |
-| Zewnętrzne API | pogoda i wyszukiwanie miasta (Open-Meteo + jego geocoding, bez klucza), kursy walut (API NBP, bez klucza) |
+| Zewnętrzne API | pogoda i wyszukiwanie miasta (Open-Meteo + jego geocoding, bez klucza), kursy walut (API NBP, bez klucza), zdjęcie miasta celu podróży (REST API Wikipedii, bez klucza) |
 | Testy | pytest + pytest-cov, mutmut, Playwright (Python), Vitest dla frontendu, scenariusze manualne |
 | Jakość i uruchamianie | Ruff (+ ESLint na froncie), GitHub Actions, Docker Compose, lokalny SonarQube |
 | Dokumentacja | README.md, AGENTS.md, dokument scenariuszy testów manualnych |
@@ -101,7 +101,7 @@ i klasy pochodne. Nowy rodzaj pozycji dodaje się bez zmiany kosztorysu.
 | **Loty** | numer lotu, lotnisko wylotu i przylotu, data i godzina, koszt, ocena | tylko zagraniczna |
 | **Transport** | środek (samochód, pociąg, autobus, prom, taksówka…), trasa, data, koszt, ocena | obie |
 | **Posiłki** | co i gdzie (restauracja), data, koszt, **jedna ocena: restauracji** | obie |
-| **Noclegi i atrakcje** | nazwa miejsca, rodzaj, data, koszt, ocena, notatka | obie (z wariantu podstawowego) |
+| **Noclegi i atrakcje** | nazwa miejsca, rodzaj, data (nocleg: zameldowanie i opcjonalnie wymeldowanie), koszt, ocena, notatka | obie (z wariantu podstawowego) |
 | **Wydatki inne** | kategoria, kwota w PLN, opis | obie |
 
 ### 2.5 Plan i lista „chcę odwiedzić”
@@ -204,6 +204,8 @@ Wybrałem tylko takie, które są tanie w implementacji i dają dodatkowy materi
 | 6 | Pogoda na stronie głównej | Użytkownik **wybiera miasto w widżecie** i widzi jego pogodę; wybór zapamiętany, domyślnie Warszawa. |
 | 7 | Logowanie | Bardzo proste: login i hasło zapisane w bazie jawnym tekstem, bez hashowania i tokenów; id użytkownika w nagłówku `X-User-Id`. |
 | 8 | Testy integracyjne | **Tworzone na późniejszym etapie** (sekcja 2.10). Backend etapu 1 ma tylko testy jednostkowe. |
+| 9 | Daty pozycji (prośba frontendu, 31.10.2026) | Daty pozycji i wpisów pamiętnika w terminie podróży (wydatek – dowolna; lot – liczy się wylot, przylot najpóźniej 48 h później). Nocleg od–do, jeden nocleg na noc. Zmiana dat podróży **nie** sprawdza istniejących pozycji. |
+| 10 | Okładka i zdjęcie miasta (prośba frontendu, 31.10.2026) | Użytkownik wybiera okładkę spośród zdjęć podróży (domyślnie pierwsze zdjęcie albumu). Podróż bez zdjęć może pokazać zdjęcie miasta z Wikipedii z linkiem do źródła. |
 
 ## 5. Kolejne kroki
 1. Model danych: tabele i relacje.

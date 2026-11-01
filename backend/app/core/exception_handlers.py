@@ -11,10 +11,13 @@ from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from app.core.errors import AppError
-from app.domain.errors import DateOutsideTripError, DomainError
+from app.domain.errors import DateOutsideTripError, DomainError, FlightTooLongError
 from app.integrations.errors import ExternalServiceError
 
-DOMAIN_ERROR_STATUS: Mapping[type[DomainError], int] = {DateOutsideTripError: 422}
+DOMAIN_ERROR_STATUS: Mapping[type[DomainError], int] = {
+    DateOutsideTripError: 422,
+    FlightTooLongError: 422,
+}
 DEFAULT_DOMAIN_STATUS = 409
 VALIDATION_MESSAGE = "Nieprawidłowe dane wejściowe."
 _LOCATION_PREFIXES = {"body", "query", "path", "header", "cookie"}

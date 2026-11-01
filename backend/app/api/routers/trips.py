@@ -5,7 +5,7 @@ from fastapi import APIRouter, Query, Response, status
 from app.api.deps import CurrentUser, DbSession, OwnedTrip, Storage
 from app.api.responses import READ, UNAUTHORIZED, VALIDATION, WRITE
 from app.domain.enums import TripStatus
-from app.schemas.trips import TripIn, TripOut, TripStatusIn
+from app.schemas.trips import TripCoverIn, TripIn, TripOut, TripStatusIn
 from app.services import trips as trips_service
 
 router = APIRouter(prefix="/trips", tags=["Podróże"])
@@ -88,3 +88,18 @@ def delete_trip(trip: OwnedTrip, db: DbSession, storage: Storage) -> None:
 )
 def change_status(payload: TripStatusIn, trip: OwnedTrip, db: DbSession) -> TripOut:
     return TripOut.model_validate(trips_service.change_status(db, trip, payload.status))
+
+
+@router.put(
+    "/{trip_id}/cover",
+    summary="Ustaw okładkę podróży",
+    description=(
+        "Wybiera zdjęcie tej podróży jako okładkę; `photo_id: null` przywraca domyślną "
+        "(pierwsze zdjęcie albumu). Zdjęcie innej podróży → 404. Archiwum → 409 TRIP_ARCHIVED. "
+        "Usunięcie zdjęcia-okładki przywraca okładkę domyślną."
+    ),
+    responses=WRITE,
+    name="set_trip_cover",
+)
+def set_cover(payload: TripCoverIn, trip: OwnedTrip, db: DbSession) -> TripOut:
+    return TripOut.model_validate(trips_service.set_cover(db, trip, payload.photo_id))

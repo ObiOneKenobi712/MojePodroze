@@ -30,3 +30,11 @@ class TripTypeChangeBlockedError(DomainError):
 
 class DateOutsideTripError(DomainError):
     code = "DATE_OUTSIDE_TRIP"
+
+
+class FlightTooLongError(DomainError):
+    code = "FLIGHT_TOO_LONG"
+
+
+class AccommodationOverlapError(DomainError):
+    code = "ACCOMMODATION_OVERLAP"

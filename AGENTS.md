@@ -214,7 +214,12 @@ Poza zakresem (decyzja): waluty obce w kosztach, mapy, EXIF, OpenStreetMap, udos
 * Hasła jawnym tekstem, brak tokenów, id w nagłówku `X-User-Id` (decyzja nr 7). Nie „naprawiaj”
   tego bez zgody właściciela projektu – opisane w README.
 * Plik zdjęcia wymaga nagłówka `X-User-Id`, więc `<img src>` nie zadziała bez `fetch` → `blob`.
-* Zmiana dat podróży nie przesuwa ani nie waliduje istniejących punktów planu.
+* Zmiana dat podróży nie przesuwa ani nie waliduje istniejących pozycji z datą (plan dnia,
+  posiłki, przejazdy, loty, noclegi i atrakcje, pamiętnik) – decyzja: zapis dozwolony. Pozycja
+  poza nowym terminem da się zapisać dopiero po poprawieniu jej daty.
+* Daty zdjęć (`day`) nie są ograniczone do terminu podróży (domyślnie dzień dodania).
+* Zdjęcie miasta z Wikipedii: atrybucja uproszczona do linku do artykułu (`source_url`);
+  licencji pliku nie pobieramy. Adres zdjęcia nie jest zapisywany w bazie.
 * Statystyki liczą tylko podróże `completed` i `archived`.
 * mutmut 3.x nie działa natywnie na Windows (Docker / WSL / GitHub Actions).
 * Brak testów integracyjnych (faza 2): API, serwisy i warstwa bazy nie są teraz pokryte testami

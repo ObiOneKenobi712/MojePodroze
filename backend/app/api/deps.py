@@ -17,6 +17,7 @@ from app.core.errors import AuthenticationRequiredError, InvalidUserError
 from app.db.models import Trip, User
 from app.integrations.nbp import NbpClient
 from app.integrations.open_meteo import OpenMeteoClient
+from app.integrations.wikipedia import WikipediaClient
 from app.services.photo_storage import PhotoStorage
 from app.services.trips import get_owned_trip
 
@@ -107,5 +108,10 @@ def get_rates_client(http: HttpClient, settings: AppSettings) -> NbpClient:
     return NbpClient(http, settings.nbp_api_url)
 
 
+def get_city_image_client(http: HttpClient, settings: AppSettings) -> WikipediaClient:
+    return WikipediaClient(http, settings.wikipedia_summary_url)
+
+
 WeatherClient = Annotated[OpenMeteoClient, Depends(get_weather_client)]
 RatesClient = Annotated[NbpClient, Depends(get_rates_client)]
+CityImageClient = Annotated[WikipediaClient, Depends(get_city_image_client)]

@@ -6,7 +6,7 @@ from decimal import Decimal
 
 import pytest
 
-from app.domain.album import group_by_day
+from app.domain.album import group_by_day, pick_cover
 from app.domain.currency import convert_to_pln
 from app.domain.enums import Currency, PlaceKind, Section, TripStatus, TripType
 
@@ -60,6 +60,20 @@ def test_album_groups_photos_by_day_in_ascending_order() -> None:
         (date(2027, 5, 2), ["b"]),
         (date(2027, 5, 3), ["c"]),
     ]
+
+
+@pytest.mark.parametrize(
+    ("cover_photo_id", "photo_ids", "expected"),
+    [
+        (7, [3, 7, 9], 7),  # wybrana okładka
+        (None, [3, 7, 9], 3),  # bez wyboru – pierwsze zdjęcie
+        (5, [3, 7, 9], 3),  # wybrane zdjęcie już nie istnieje
+        (None, [], None),  # brak zdjęć
+        (5, [], None),
+    ],
+)
+def test_pick_cover(cover_photo_id: int | None, photo_ids: list[int], expected: int | None) -> None:
+    assert pick_cover(cover_photo_id, photo_ids) == expected
 
 
 def test_empty_album() -> None:
