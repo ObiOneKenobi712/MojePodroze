@@ -30,3 +30,6 @@ frontend/dist/
 playwright-report/
 test-results/
 .DS_Store
+
+# --- Testy (pliki robocze MCP Playwrighta)
+.playwright-mcp/
