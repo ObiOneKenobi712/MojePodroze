@@ -8,7 +8,7 @@ export default defineConfig({
     // Zapytania do /api przekazujemy do backendu (FastAPI na porcie 8000).
     // 127.0.0.1 zamiast localhost: Node wybiera IPv6, a uvicorn nasłuchuje na IPv4.
     proxy: {
-      '/api': 'http://127.0.0.1:8000',
+      '/api': process.env.API_PROXY_TARGET ?? 'http://127.0.0.1:8000',
     },
   },
 })

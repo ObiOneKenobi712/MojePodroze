@@ -170,7 +170,10 @@ gita, w pierwszym commicie – można od niej zacząć:
     **żadnych selektorów opartych na klasach CSS** w testach.
 * Testy: Vitest + Testing Library (formatowanie kwot i dat, komponenty formularzy i widżetów,
   walidacja po stronie klienta, klient API z atrapą `fetch`), ESLint.
-* Docker Compose: usługa `frontend` (port 5173), `MP_CORS_ORIGINS` już obejmuje ten port.
+* Docker Compose: usługa `frontend` (port 5173) – ✅ gotowe. Obraz z `frontend/Dockerfile` uruchamia
+  `npm run dev -- --host 0.0.0.0`; proxy `/api` w `vite.config.ts` czyta adres backendu ze zmiennej
+  `API_PROXY_TARGET` (w compose `http://backend:8000`, lokalnie domyślnie `http://127.0.0.1:8000`).
+  Frontend czeka na zdrowy backend (`depends_on: condition: service_healthy`). `backend/Dockerfile` bez zmian.
 * SonarQube: `frontend/sonar-project.properties` (projekt `moje-podroze-frontend`, raport
   `coverage/lcov.info`) i usługa `sonar-scanner-frontend` w `docker-compose.yml`.
 * CI: osobny workflow `.github/workflows/frontend.yml` (lint, Vitest).

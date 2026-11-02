@@ -94,7 +94,7 @@ echo    migration-check  sprawdz, czy migracje sa zgodne z modelami
 echo    reset-db         usun lokalna baze i zdjecia (backend\data)
 echo.
 echo  Docker i porzadki
-echo    docker-up        backend w Dockerze: http://localhost:8000/docs
+echo    docker-up        backend i frontend w Dockerze: http://localhost:5173
 echo    docker-down      zatrzymaj kontenery
 echo    clean            usun cache i wygenerowane raporty
 exit /b 0
