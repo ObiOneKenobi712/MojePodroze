@@ -94,7 +94,7 @@ reset-db: ## usuń lokalną bazę i zdjęcia (backend/data)
 
 # --- Docker i porządki ----------------------------------------------------------------------
 
-docker-up: ## backend w Dockerze: http://localhost:8000/docs
+docker-up: ## backend i frontend w Dockerze: http://localhost:5173
 	docker compose up -d --build
 
 docker-down: ## zatrzymaj kontenery
