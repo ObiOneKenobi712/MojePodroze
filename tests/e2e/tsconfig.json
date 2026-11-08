@@ -6,7 +6,12 @@
     "strict": true,
     "noEmit": true,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "paths": {
+      "@_src/*": ["./src/*"],
+      "@_config/*": ["./config/*"],
+      "@_pw-config": ["./playwright.config.ts"]
+    }
   },
   "include": ["**/*.ts"]
 }
