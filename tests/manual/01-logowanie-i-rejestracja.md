@@ -6,9 +6,9 @@ Zasady walidacji: login 3–50 znaków, tylko litery, cyfry oraz `_`, `.`, `-`; 
 
 | ID | Tytuł | Priorytet | Automat |
 |---|---|---|---|
-| TC-01 | Nowy użytkownik zakłada konto, wylogowuje się i loguje ponownie | Wysoki | ✅ Tak |
-| TC-02 | Formularz rejestracji odrzuca błędne dane, a po poprawieniu zakłada konto | Wysoki | ✅ Tak |
-| TC-03 | Nieudane logowanie i próba rejestracji na zajęty login, potem poprawne logowanie | Wysoki | ✅ Tak |
+| TC-01 | Nowy użytkownik zakłada konto, wylogowuje się i loguje ponownie | Wysoki | ❌ Nie |
+| TC-02 | Formularz rejestracji odrzuca błędne dane, a po poprawieniu zakłada konto | Wysoki | ❌ Nie |
+| TC-03 | Nieudane logowanie i próba rejestracji na zajęty login, potem poprawne logowanie | Wysoki | ❌ Nie |
 | TC-04 | Zalogowany użytkownik pozostaje zalogowany po odświeżeniu i w nowej karcie | Średni | ❌ Nie |
 
 ---
@@ -17,7 +17,7 @@ Zasady walidacji: login 3–50 znaków, tylko litery, cyfry oraz `_`, `.`, `-`; 
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
-| 2.1 | Wysoki | ✅ Tak |
+| 2.1 | Wysoki | ❌ Nie |
 
 **Warunki wstępne:** aplikacja uruchomiona, użytkownik niezalogowany (np. nowe okno incognito).
 
@@ -42,7 +42,7 @@ Zasady walidacji: login 3–50 znaków, tylko litery, cyfry oraz `_`, `.`, `-`; 
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
-| 2.1 | Wysoki | ✅ Tak |
+| 2.1 | Wysoki | ❌ Nie |
 
 **Warunki wstępne:** strona `/logowanie`, użytkownik niezalogowany.
 
@@ -66,7 +66,7 @@ hasło 3-znakowe, hasło 4-znakowe; na końcu nowy, nieużywany login.
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
-| 2.1 | Wysoki | ✅ Tak |
+| 2.1 | Wysoki | ❌ Nie |
 
 **Warunki wstępne:** istnieje konto z hasłem zawierającym wielką literę (np. z TC-01), użytkownik wylogowany, strona `/logowanie`.
 
