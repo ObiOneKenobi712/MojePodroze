@@ -27,14 +27,8 @@ export default defineConfig({
       use: { ...devices['Desktop Chrome'] },
     },
     {
-      name: 'setup',
-      testMatch: '*.setup.ts',
-      use: { trace: 'off', video: 'off', screenshot: 'off' },
-    },
-    {
       name: 'chromium-logged',
       grep: /@logged/,
-      dependencies: ['setup'],
       use: { ...devices['Desktop Chrome'], storageState: STORAGE_STATE },
     },
   ],
