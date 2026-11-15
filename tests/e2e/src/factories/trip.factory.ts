@@ -1,7 +1,13 @@
 import { AddTripModel } from "@_src/models/trip.model";
 
-export function prepareTrip(tripData: AddTripModel): AddTripModel {
-  const uniqueSuffix = Math.random().toString(36).slice(2, 8);
+function getUniqueSuffix(): string {
+  return Math.random().toString(36).slice(2, 8);
+}
 
-  return { ...tripData, name: `${tripData.name}-${uniqueSuffix}` };
+export function prepareTrip(tripData: AddTripModel): AddTripModel {
+  return { ...tripData, name: `${tripData.name}-${getUniqueSuffix()}` };
+}
+
+export function prepareUniqueCity(city: string): string {
+  return `${city}-${getUniqueSuffix()}`;
 }

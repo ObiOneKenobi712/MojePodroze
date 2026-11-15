@@ -22,6 +22,28 @@ export const inProgressTripData: AddTripModel = {
   character_id: TripCharacterId.Mountains,
 };
 
+export const domesticTripData: AddTripModel = {
+  name: "Mazury latem",
+  destination_city: "Giżycko",
+  destination_country: "Polska",
+  start_date: getIsoDateFromToday(40),
+  end_date: getIsoDateFromToday(44),
+  trip_type: TripType.Domestic,
+  character_id: TripCharacterId.Lakes,
+  planned_budget: 1500,
+};
+
+export const foreignTripData: AddTripModel = {
+  name: "Rzym zimą",
+  destination_city: "Rzym",
+  destination_country: "Włochy",
+  start_date: getIsoDateFromToday(30),
+  end_date: getIsoDateFromToday(34),
+  trip_type: TripType.Foreign,
+  character_id: TripCharacterId.City,
+  planned_budget: 3000.5,
+};
+
 export const completedTripData: AddTripModel = {
   name: "Podróż zrealizowana",
   destination_city: "Lizbona",
