@@ -1,10 +1,12 @@
 import { STORAGE_STATE } from "@_pw-config";
 import { TripsApi } from "@_src/api/trips.api";
+import { WidgetsApi } from "@_src/api/widgets.api";
 import { test as baseTest } from "@playwright/test";
 import * as fs from "fs";
 
 interface Api {
   tripsApi: TripsApi;
+  widgetsApi: WidgetsApi;
 }
 
 interface StorageEntry {
@@ -26,6 +28,13 @@ function readUserIdFromSession(): string {
 
 export const apiTest = baseTest.extend<Api>({
   tripsApi: async ({ request }, use) => {
-    await use(new TripsApi(request, readUserIdFromSession()));
+    const tripsApi = new TripsApi(request, readUserIdFromSession());
+    await use(tripsApi);
+    await tripsApi.deleteTestTrips();
+  },
+  widgetsApi: async ({ request }, use) => {
+    const widgetsApi = new WidgetsApi(request, readUserIdFromSession());
+    await use(widgetsApi);
+    await widgetsApi.restoreWeatherCity();
   },
 });
