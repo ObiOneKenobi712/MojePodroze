@@ -6,7 +6,7 @@ import { TripCardModel } from "@_src/models/trip-card.model";
 import { completedTripData, inProgressTripData, plannedTripData } from "@_src/test-data/trip.data";
 import { getExpectedCardsOrder, getExpectedCountdownForNearestTrip } from "@_src/utils/trip-card.util";
 
-test("TC-05 Podróże wyświetlają się w grupach według statusu @logged", async ({ myTripsPage, tripsApi, page }) => {
+test("TC-05 Podróże wyświetlane są na liście podróży w grupach według statusu @logged", async ({ myTripsPage, tripsApi, page }) => {
   const plannedTrip = prepareTrip(plannedTripData);
   const inProgressTrip = prepareTrip(inProgressTripData);
   const completedTrip = prepareTrip(completedTripData);
