@@ -6,10 +6,10 @@ Zasady walidacji: login 3–50 znaków, tylko litery, cyfry oraz `_`, `.`, `-`; 
 
 | ID | Tytuł | Priorytet | Automat |
 |---|---|---|---|
-| TC-01 | Nowy użytkownik zakłada konto, wylogowuje się i loguje ponownie | Wysoki | ❌ Nie |
-| TC-02 | Formularz rejestracji odrzuca błędne dane, a po poprawieniu zakłada konto | Wysoki | ❌ Nie |
-| TC-03 | Nieudane logowanie i próba rejestracji na zajęty login, potem poprawne logowanie | Wysoki | ❌ Nie |
-| TC-04 | Zalogowany użytkownik pozostaje zalogowany po odświeżeniu i w nowej karcie | Średni | ❌ Nie |
+| TC-01 | Nowy użytkownik zakłada konto, wylogowuje się i loguje ponownie | Wysoki | ✅ Częściowo, smoke |
+| TC-02 | Formularz rejestracji odrzuca błędne dane | Wysoki | ❌ Nie |
+| TC-03 | Logowanie błędnymi danymi i rejestracja zajętym loginem są odrzucane | Wysoki | ❌ Nie |
+| TC-04 | Użytkownik pozostaje zalogowany po odświeżeniu strony | Średni | ❌ Nie |
 
 ---
 
@@ -17,9 +17,9 @@ Zasady walidacji: login 3–50 znaków, tylko litery, cyfry oraz `_`, `.`, `-`; 
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
-| 2.1 | Wysoki | ❌ Nie |
+| 2.1 | Wysoki | ✅ Tak, smoke |
 
-**Warunki wstępne:** aplikacja uruchomiona, użytkownik niezalogowany (np. nowe okno incognito).
+**Warunki wstępne:** aplikacja uruchomiona, użytkownik niezalogowany.
 
 **Dane testowe:** nowy, nieużywany login; poprawne hasło (co najmniej 4 znaki).
 
@@ -38,7 +38,7 @@ Zasady walidacji: login 3–50 znaków, tylko litery, cyfry oraz `_`, `.`, `-`; 
 
 ---
 
-### TC-02 Formularz rejestracji odrzuca błędne dane, a po poprawieniu zakłada konto
+### TC-02 Formularz rejestracji odrzuca błędne dane
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -62,7 +62,7 @@ hasło 3-znakowe, hasło 4-znakowe; na końcu nowy, nieużywany login.
 
 ---
 
-### TC-03 Nieudane logowanie i próba rejestracji na zajęty login, potem poprawne logowanie
+### TC-03 Logowanie błędnymi danymi i rejestracja zajętym loginem są odrzucane
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -83,7 +83,7 @@ hasło 3-znakowe, hasło 4-znakowe; na końcu nowy, nieużywany login.
 
 ---
 
-### TC-04 Zalogowany użytkownik pozostaje zalogowany po odświeżeniu i w nowej karcie
+### TC-04 Użytkownik pozostaje zalogowany po odświeżeniu strony
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|

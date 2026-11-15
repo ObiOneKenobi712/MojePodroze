@@ -6,16 +6,16 @@ zmiany typu na krajową, gdy podróż ma loty.
 
 | ID | Tytuł | Priorytet | Automat |
 |---|---|---|---|
-| TC-10 | Użytkownik tworzy podróż, edytuje ją i usuwa | Wysoki | ✅ Tak |
-| TC-11 | Formularz podróży odrzuca błędne dane, a po poprawieniu zapisuje podróż | Wysoki | ✅ Tak |
-| TC-12 | Typ podróży decyduje o sekcjach, a zmiana na krajową jest zablokowana, gdy są loty | Wysoki | ✅ Tak |
-| TC-13 | Status podróży zmienia się o jeden krok do przodu i wstecz | Wysoki | ✅ Tak |
-| TC-14 | Podróż w archiwum jest tylko do odczytu do czasu cofnięcia statusu | Wysoki | ✅ Tak |
-| TC-15 | Pominięcie etapu statusu przez API jest odrzucane | Średni | ❌ Nie (test API) |
+| TC-10 | Użytkownik dodaje, edytuje i usuwa podróż | Wysoki | ✅ Tak |
+| TC-11 | Formularz podróży wskazuje błędne pola i zapisuje podróż po ich poprawieniu | Wysoki | ✅ Tak |
+| TC-12 | Zakładki podróży zależą od jej typu, a loty blokują zmianę typu podróży na krajową | Wysoki | ✅ Tak |
+| TC-13 | Status podróży zmienia się tylko o jeden etap do przodu lub wstecz | Wysoki | ✅ Tak |
+| TC-14 | Podróż w archiwum jest tylko do odczytu, dopóki jej status nie zostanie cofnięty | Wysoki | ✅ Tak |
+| TC-15 | API odrzuca zmianę statusu z pominięciem etapu | Średni | ❌ Nie (test API) |
 
 ---
 
-### TC-10 Użytkownik tworzy podróż, edytuje ją i usuwa
+### TC-10 Użytkownik dodaje, edytuje i usuwa podróż
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -45,7 +45,7 @@ miesiąc, data do – 4 dni później (podróż 5-dniowa), typ „Zagraniczna”
 
 ---
 
-### TC-11 Formularz podróży odrzuca błędne dane, a po poprawieniu zapisuje podróż
+### TC-11 Formularz podróży wskazuje błędne pola i zapisuje podróż po ich poprawieniu
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -69,7 +69,7 @@ miesiąc, data do – 4 dni później (podróż 5-dniowa), typ „Zagraniczna”
 
 ---
 
-### TC-12 Typ podróży decyduje o sekcjach, a zmiana na krajową jest zablokowana ze względu na loty
+### TC-12 Zakładki podróży zależą od jej typu, a loty blokują zmianę typu podróży na krajową
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -100,7 +100,7 @@ miesiąc, data do – 4 dni później (podróż 5-dniowa), typ „Zagraniczna”
 
 ---
 
-### TC-13 Status podróży zmienia się o jeden krok do przodu i wstecz
+### TC-13 Status podróży zmienia się tylko o jeden etap do przodu lub wstecz
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -131,7 +131,7 @@ miesiąc, data do – 4 dni później (podróż 5-dniowa), typ „Zagraniczna”
 
 ---
 
-### TC-14 Podróż w archiwum jest tylko do odczytu do czasu cofnięcia statusu
+### TC-14 Podróż w archiwum jest tylko do odczytu, dopóki jej status nie zostanie cofnięty
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -161,14 +161,13 @@ miesiąc, data do – 4 dni później (podróż 5-dniowa), typ „Zagraniczna”
 
 ---
 
-### TC-15 Pominięcie etapu statusu przez API jest odrzucane
+### TC-15 API odrzuca zmianę statusu z pominięciem etapu
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
 | 2.3 | Średni | ❌ Nie (test API w `tests/e2e`, bez GUI) |
 
-GUI nie pokazuje przycisku przeskakującego etap, więc regułę sprawdza się przez API – ręcznie w
-Swaggerze: http://localhost:8000/docs.
+GUI nie pokazuje przycisku przeskakującego etap, więc regułę sprawdza się przez API.
 
 **Warunki wstępne:** konto ma podróż w statusie „w planie”; znane id użytkownika i id podróży.
 

@@ -55,7 +55,7 @@ kosztowymi na łączną kwotę mniejszą niż 4000 zł, otwarte szczegóły podr
 |---|---|---|
 | 1 | Zweryfikuj zakładkę „Przegląd” | Widoczna pozycja „Budżet: 5000,00 zł”. |
 | 2 | Kliknij „Edytuj”, wyczyść pole „Budżet (PLN, opcjonalnie)”, kliknij „Zapisz zmiany” | Zapisano pomyślnie (budżet jest opcjonalny). W „Przeglądzie” widoczne pole: „Budżet: nie ustalono”. |
-| 3 | Kliknij zakładkę „Kosztorys” | W bloku „Budżet” widoczny komunikat „Nie ustalono budżetu. Ustaw go w edycji podróży.” (link). |
+| 3 | Kliknij zakładkę „Kosztorys” | W bloku „Budżet” widoczny komunikat „Nie ustalono budżetu. Ustaw go w edycji podróży.” |
 | 4 | Kliknij link „Ustaw go w edycji podróży” | Otwiera się formularz „Edytuj podróż” (`/podroze/<id>/edycja`). |
 | 5 | Wpisz budżet `0`, kliknij „Zapisz zmiany” | Przy budżecie widoczny komunikat walidacyjny: „Podaj kwotę większą od zera, np. 2500 albo 2500,50.” |
 | 6 | Wpisz budżet `4000.5`, kliknij „Zapisz zmiany” | Powrót do szczegółów podroży. W zakładce „Przegląd”: „Budżet: 4000,50 zł” (kropka zamieniona na przecinek, 2 miejsca po przecinku). |

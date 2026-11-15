@@ -31,8 +31,8 @@ z pustym pamiętnikiem, otwarta zakładka „Pamiętnik”.
 
 | # | Krok | Oczekiwany wynik |
 |---|---|---|
-| 1 | Zweryfikuj zakładkę | Widoczny komunikat: „Pamiętnik jest pusty. Zapisz pierwsze wrażenia z podróży.” i przycisk „Dodaj wpis”. |
-| 2 | Kliknij „Dodaj wpis” | Widoczny formularz „Nowy wpis”: Dzień (domyślnie dzień 1; kalendarz tylko w terminie podróży), Tytuł (opcjonalnie), Treść. |
+| 1 | Zweryfikuj zakładkę "Pamiętnik" | Widoczny komunikat: „Pamiętnik jest pusty. Zapisz pierwsze wrażenia z podróży.” i przycisk „Dodaj wpis”. |
+| 2 | Kliknij „Dodaj wpis” | Widoczny formularz „Nowy wpis”: Dzień (domyślnie dzień 1; kalendarz tylko w terminie podróży), Tytuł (opcjonalnie), Pole treść. |
 | 3 | Kliknij „Dodaj” bez wpisania treści | Widoczny komunikat walidacyjny formularza: „Popraw zaznaczone pola.”, przy polu treść widoczny komunikat wlidacyjny: „Napisz treść wpisu.” |
 | 4 | Dodaj wpis 1 z danych testowych | Wpis pojawia się w grupie: „Dzień 2 · <dzień tygodnia>, <data>” z tytułem i treścią dodanymi w poprzednim korku, w dwóch akapitach. |
 | 5 | Dodaj wpis 2 z danych testowych (bez tytułu) | Wpis pojawia się na liście w grupie „Dzień 1 · …” jest widoczny **nad** grupą „Dzień 2” – wpisy ułożone według dni, nie według kolejności dodania. Wpis bez tytułu pokazuje samą treść. |

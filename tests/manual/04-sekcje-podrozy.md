@@ -13,16 +13,16 @@ W przypadkach testowych „dzień 1” oznacza pierwszy dzień podróży, „dzi
 
 | ID | Tytuł | Priorytet | Automat |
 |---|---|---|---|
-| TC-16 | Użytkownik układa plan dnia – punkty grupują się według dni i godzin | Wysoki | ✅ Tak |
+| TC-16 | Punkty planu dnia grupują się według dni i układają według godziny | Wysoki | ✅ Tak |
 | TC-17 | Użytkownik dodaje, edytuje, kopiuje i usuwa loty w podróży zagranicznej | Wysoki | ✅ Tak |
-| TC-18 | Użytkownik dodaje przejazd z wybranym środkiem transportu | Wysoki | ✅ Tak |
-| TC-19 | Posiłek ma jedną ocenę restauracji, a suma sekcji liczy koszty | Wysoki | ✅ Tak |
-| TC-20 | Noclegi nie mogą się nakładać, atrakcje mają jedną datę | Wysoki | ✅ Tak |
-| TC-21 | Wydatki inne mają kategorię, nie mają oceny, a data jest opcjonalna | Średni | ✅ Tak |
+| TC-18 | Użytkownik dodaje, kopiuje i edytuje przejazdy z wybranym środkiem transportu | Wysoki | ✅ Tak |
+| TC-19 | Użytkownik dodaje, edytuje i usuwa posiłki z oceną restauracji | Wysoki | ✅ Tak |
+| TC-20 | Użytkownik dodaje noclegi i atrakcje, a terminy noclegów nie mogą się nakładać | Wysoki | ✅ Tak |
+| TC-21 | Po dodaniu wydatków innych ich suma jest widoczna w kosztorysie | Średni | ✅ Tak |
 
 ---
 
-### TC-16 Użytkownik układa plan dnia – punkty grupują się według dni i godzin
+### TC-16 Punkty planu dnia grupują się według dni i układają według godziny
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -80,7 +80,7 @@ przyloty: dzień 1 07:00 (przed wylotem), dzień 3 09:00 (ponad 48 h), dzień 1 
 
 ---
 
-### TC-18 Użytkownik dodaje przejazd z wybranym środkiem transportu
+### TC-18 Użytkownik dodaje, kopiuje i edytuje przejazdy z wybranym środkiem transportu
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -103,7 +103,7 @@ przyloty: dzień 1 07:00 (przed wylotem), dzień 3 09:00 (ponad 48 h), dzień 1 
 
 ---
 
-### TC-19 Posiłek ma jedną ocenę restauracji, a suma sekcji liczy koszty
+### TC-19 Użytkownik dodaje, edytuje i usuwa posiłki z oceną restauracji
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -128,7 +128,7 @@ przyloty: dzień 1 07:00 (przed wylotem), dzień 3 09:00 (ponad 48 h), dzień 1 
 
 ---
 
-### TC-20 Noclegi nie mogą się nakładać, atrakcje mają jedną datę
+### TC-20 Użytkownik dodaje noclegi i atrakcje, a terminy noclegów nie mogą się nakładać
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -142,20 +142,20 @@ dzień 2, koszt `40`, ocena 5 / 5, notatka „Kupić bilety online”.
 
 | # | Krok | Oczekiwany wynik |
 |---|---|---|
-| 1 | Kliknij „Dodaj nocleg lub atrakcję” | Formularz „Nowy nocleg lub atrakcja”. Rodzaj: Nocleg / Atrakcja (domyślnie Nocleg). Przy noclegu pole daty nazywa się „Zameldowanie” i jest pole „Wymeldowanie (opcjonalnie)”. |
+| 1 | Kliknij „Dodaj nocleg lub atrakcję” | Formularz „Nowy nocleg lub atrakcja”. Rodzaj: Nocleg / Atrakcja (domyślnie Nocleg). Przy noclegu pole daty nazywa się „Zameldowanie” i widoczne jest pole „Wymeldowanie (opcjonalnie)”. |
 | 2 | Wpisz „Hotel Gdańsk”, zameldowanie dzień 1, wymeldowanie też dzień 1, koszt i ocenę, kliknij „Dodaj” | Przy wymeldowaniu widoczny komunikat walidacyjny: „Wymeldowanie musi być później niż zameldowanie.” |
 | 3 | Zmień wymeldowanie na dzień 4, kliknij „Dodaj” | Na liście: „Hotel Gdańsk”, „Nocleg · <dzień 1>–<dzień 4> · 3 noce”, 4 gwiazdki, „1200,00 zł”. |
 | 4 | Dodaj nocleg „Hostel Motława” z zameldowaniem dzień 3 (bez wymeldowania), kliknij „Dodaj” | Przy zameldowaniu widoczny komunikat walidacyjny: „W tym terminie jest już nocleg „Hotel Gdańsk” (<dzień 1>–<dzień 4>). Zmień daty albo edytuj tamten nocleg.” |
 | 5 | Zmień zameldowanie na dzień 4 (dzień wymeldowania z hotelu), kliknij „Dodaj” | Zapisano pomyślnie: „Hostel Motława”, „Nocleg · <dzień 4>–<dzień 5> · 1 noc”, „bez oceny”. |
 | 6 | Kliknij „Dodaj nocleg lub atrakcję”, wybierz rodzaj „Atrakcja” | Pole daty = „Data”, pole „Wymeldowanie” nie jest widoczne. |
-| 7 | Wypełnij atrakcję danymi testowymi z notatką, kliknij „Dodaj” | Na liście widoczne: „Muzeum II Wojny Światowej”, „Atrakcja · <dzień 2>”, 5 gwiazdek, notatka „Kupić bilety online”, „40,00 zł”. |
+| 7 | Wypełnij formularz atrakcji danymi testowymi z notatką, kliknij „Dodaj” | Na liście widoczna dodana atrakcja: „Muzeum II Wojny Światowej”, „Atrakcja · <dzień 2>”, 5 gwiazdek, notatka „Kupić bilety online”, „40,00 zł”. |
 | 8 | Zweryfikuj sumę | „Razem: 1390,00 zł”. |
 
 **Wykonanie:** Data: … · Tester: … · Wynik: … · Uwagi: …
 
 ---
 
-### TC-21 Wydatki inne mają kategorię, nie mają oceny, a data jest opcjonalna
+### TC-21 Po dodaniu wydatków i innych, suma wydatków jest widoczna w kosztorysie podróży
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -170,9 +170,9 @@ podróżą, kwota `89,99`; „Magnes na lodówkę” – kategoria Pamiątki, be
 |---|---|---|
 | 1 | Kliknij „Dodaj wydatek” | Formularz „Nowy wydatek”: Opis, Kategoria (Bilety wstępu, Pamiątki, Ubezpieczenie, Zakupy, Opłaty i parkingi, Inne), Data (opcjonalnie) – pusta, Kwota (PLN). **Brak pola oceny.** |
 | 2 | Kliknij „Dodaj” bez wypełniania | Widoczny komunikat walidacyjny formularza: "Popraw zaznaczone pola". Przy polach widoczne komunikaty walidacyjne: „Podaj, na co był wydatek.”, „Podaj kwotę, np. 45 albo 45,50.” |
-| 3 | Dodaj „Ubezpieczenie podróżne” z datą sprzed podróży | Zapisano pomyślnie (data wydatku może być poza terminem podróży). Widoczna dodana pozycja: „Ubezpieczenie · <data>”, „89,99 zł”, bez gwiazdek. |
-| 4 | Dodaj „Magnes na lodówkę” bez daty | Widoczna dodana pozycja: „Pamiątki · bez daty”, „15,00 zł”. |
-| 5 | Zweryfikuj sumę | „Razem: 104,99 zł”. |
-| 6 | Kliknij zakładkę „Kosztorys” | W wierszu „Wydatki inne” liczba pozycji 2, średnia ocena „bez ocen”, suma 104,99 zł. |
+| 3 | Dodaj „Ubezpieczenie podróżne” z datą sprzed podróży | Zapisano pomyślnie (data wydatku może być poza terminem podróży). Widoczna dodana pozycja: „Ubezpieczenie · <data>”, „89,99 zł”. |
+| 4 | Dodaj pozycje "Pamiątki" = „Magnes na lodówkę” bez daty | Widoczna dodana pozycja: „Pamiątki · bez daty”, „15,00 zł”. |
+| 5 | Zweryfikuj sumę | Widoczne podsumowanie „Razem: 104,99 zł”. |
+| 6 | Kliknij zakładkę „Kosztorys” | W wierszu „Wydatki inne” liczba pozycji powinna wynosić 2, średnia ocena „bez ocen”, suma 104,99 zł. |
 
 **Wykonanie:** Data: … · Tester: … · Wynik: … · Uwagi: …

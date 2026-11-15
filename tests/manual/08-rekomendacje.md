@@ -12,13 +12,13 @@ wcześniejszej podróży albo jest już na liście bieżącej podróży.
 
 | ID | Tytuł | Priorytet | Automat |
 |---|---|---|---|
-| TC-33 | Pierwsza podróż do miasta nie ma rekomendacji | Średni | ✅ Tak |
-| TC-34 | Kolejna podróż do miasta poleca najlepiej ocenione miejsca z wcześniejszych podróży | Wysoki | ✅ Tak (dane przez API) |
-| TC-35 | Kolejna podróż przypomina niezaliczone punkty z listy „Chcę odwiedzić” | Wysoki | ✅ Tak (dane przez API) |
+| TC-33 | Pierwsza podróż do miasta nie ma rekomendacji, a podróż „w planie” nie wlicza się do wcześniejszych podróży | Średni | ✅ Tak |
+| TC-34 | Polecane miejsca z wcześniejszej podróży, ze średnią oceną co najmniej 4, przy kolejnej podróży do danego miasta | Wysoki | ✅ Tak (dane przez API) |
+| TC-35 | Przypomnienie o niezaliczonych punktach przy kolejnej podróży do danego miasta | Wysoki | ✅ Tak (dane przez API) |
 
 ---
 
-### TC-33 Pierwsza podróż do miasta nie ma rekomendacji
+### TC-33 Pierwsza podróż do miasta nie ma rekomendacji, a podróż „w planie” nie wlicza się do wcześniejszych podróży
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -41,7 +41,7 @@ z planu”, ocena 5; druga podróż „Zamość znowu” do Zamościa.
 
 ---
 
-### TC-34 Kolejna podróż do miasta poleca najlepiej ocenione miejsca z wcześniejszych podróży
+### TC-34 Polecane miejsca z wcześniejszej podróży, ze średnią oceną co najmniej 4, przy kolejnej podróży do danego miasta
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -66,7 +66,7 @@ Krakowa (innych podróży do Krakowa nie ma):
 
 ---
 
-### TC-35 Kolejna podróż przypomina niezaliczone punkty z listy „Chcę odwiedzić”
+### TC-35 Przypomnienie o niezaliczonych punktach przy kolejnej podróży do danego miasta
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|

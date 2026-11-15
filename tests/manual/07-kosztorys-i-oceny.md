@@ -10,7 +10,7 @@ Na końcu: obowiązkowy przypadek testowy E2E „pełne życie podróży”.
 | TC-29 | Kosztorys sumuje koszty według sekcji i liczy średnie ocen | Wysoki | ✅ Tak |
 | TC-30 | Status budżetu zmienia się w progach 90% i 100% | Wysoki | ✅ Tak |
 | TC-31 | Kosztorys podróży w archiwum jest tylko do odczytu | Wysoki | ✅ Tak |
-| TC-32 | Pełne życie podróży – od rejestracji do kosztorysu w archiwum | Wysoki | ✅ Tak (obowiązkowy E2E) |
+| TC-32 | Pełne życie podróży – od utworzenia do kosztorysu w archiwum | Wysoki | ✅ Tak (obowiązkowy E2E) |
 
 ---
 

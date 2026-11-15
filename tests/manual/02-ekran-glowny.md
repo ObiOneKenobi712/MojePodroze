@@ -5,14 +5,14 @@ zachowanie widżetów przy awarii zewnętrznego API. Adres: http://localhost:517
 
 | ID | Tytuł | Priorytet | Automat |
 |---|---|---|---|
-| TC-05 | Podróże wyświetlają się w grupach według statusu | Wysoki | ✅ Tak |
-| TC-06 | Użytkownik zmienia miasto w widżecie pogody, a wybór zostaje zapamiętany | Wysoki | ✅ Tak |
+| TC-05 | Podróże wyświetlane są na liście podróży w grupach według statusu | Wysoki | ✅ Tak |
+| TC-06 | Po zmianie miasta w widżecie pogody, wybór zostaje zapamiętany | Wysoki | ✅ Tak |
 | TC-07 | Widżet kursów NBP pokazuje kursy i przelicza kwotę na PLN | Wysoki | ✅ Tak |
-| TC-08 | Awaria API pogody i kursów nie blokuje pozostałych funkcji aplikacji | Wysoki | ✅ Tak |
+| TC-08 | Awaria API pogody i kursów nie blokuje pozostałych funkcji aplikacji | Wysoki | ❌ Nie |
 
 ---
 
-### TC-05 Podróże wyświetlają się w grupach według statusu
+### TC-05 Podróże wyświetlane są na liście podróży w grupach według statusu
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -40,7 +40,7 @@ zrealizowana” (status „zrealizowana”).
 
 ---
 
-### TC-06 Użytkownik zmienia miasto w widżecie pogody, a wybór zostaje zapamiętany
+### TC-06 Po zmianie miasta w widżecie pogody, wybór zostaje zapamiętany
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
@@ -49,7 +49,7 @@ zrealizowana” (status „zrealizowana”).
 **Warunki wstępne:** użytkownik zalogowany, ekran `/podroze`, dostęp do Internetu. Widżet pogody pokazuje
 domyślne miasto „Warszawa, Polska”.
 
-**Dane testowe:** wpisy do wyszukiwarki: `K` (1 litera), `Qwxzyv` (nieistniejące miasto), `Kraków`.
+**Dane testowe:** wpisy do wyszukiwarki: `Qwxzyv` (nieistniejące miasto), `Kraków`.
 
 | # | Krok | Oczekiwany wynik |
 |---|---|---|
@@ -96,23 +96,21 @@ https://nbp.pl (tabela A, kurs średni).
 
 | Wymaganie | Priorytet | Automat |
 |---|---|---|
-| 2.2 | Wysoki | ✅ Tak (obowiązkowy E2E; awaria symulowana przez Playwright `route` – odpowiedź 503) |
+| 2.2 | Wysoki | ❌ Nie |
 
-**Warunki wstępne:** użytkownik zalogowany, konto ma co najmniej jedną podróż. Manualnie awarię
-symuluje się w narzędziach deweloperskich Chrome (F12 → Network → prawy przycisk na zapytaniu
-`weather/current` i `exchange-rates` → „Block request URL”).
+**Warunki wstępne:** użytkownik zalogowany, konto ma co najmniej jedną podróż. 
 
 **Dane testowe:** –
 
 | # | Krok | Oczekiwany wynik |
 |---|---|---|
-| 1 | Zablokuj zapytania `/api/weather/current` i `/api/exchange-rates`, odśwież stronę `/podroze` | Widżet „Pogoda” pokazuje komunikat o błędzie i przycisk „Spróbuj ponownie”. Przy odpowiedzi 503 z backendu treść to: „Serwis pogody jest chwilowo niedostępny.” |
+| 1 | Symulowana awaria API pogody i kursów, odśwież stronę `/podroze` | Widżet „Pogoda” pokazuje komunikat o błędzie i przycisk „Spróbuj ponownie”. Przy odpowiedzi 503 z backendu treść to: „Serwis pogody jest chwilowo niedostępny.” |
 | 2 | Zweryfikuj widżet „Kursy NBP” | Komunikat o błędzie (przy 503: „Serwis kursów walut NBP jest chwilowo niedostępny.”) i przycisk „Spróbuj ponownie”. |
 | 3 | Zweryfikuj listę podróży | Lista i zakładki działają parwidłowo, liczniki są poprawne, widżet „Najbliższa podróż” wskazuje najbliższą podróż z prawidłowym licznikiem dni do danej podróży. |
 | 4 | Kliknij zakładkę „W planie”, następnie „Wszystkie” | Możliwa jest nawigacja między zakładkami, karty podróży są widoczne w zakładkach, zgodnie z przypisanym statusem. |
 | 5 | Kliknij „Nowa podróż”, następnie „← Moje podróże” | Formularz nowej podróży otwiera się; po powrocie ekran główny z listą wszystkich podróży jest widoczny. |
-| 6 | Odblokuj zapytanie pogody, w widżecie „Pogoda” kliknij „Spróbuj ponownie” | Widżet pokazuje miasto i aktualną pogodę, komunikat błędu znika. |
-| 7 | Odblokuj zapytanie kursów, w widżecie „Kursy NBP” kliknij „Spróbuj ponownie” | Widżet pokazuje kursy EUR, USD, GBP i datę kursu. |
+| 6 | Gdy API pogody jest dostępne, w widżecie „Pogoda” kliknij „Spróbuj ponownie” | Widżet pokazuje miasto i aktualną pogodę, komunikat błędu znika. |
+| 7 | Gdy API kursów jest dostępne, w widżecie „Kursy NBP” kliknij „Spróbuj ponownie” | Widżet pokazuje kursy EUR, USD, GBP i datę kursu. |
 
 **Wykonanie:** Data: … · Tester: … · Wynik: … · Uwagi: …
 
