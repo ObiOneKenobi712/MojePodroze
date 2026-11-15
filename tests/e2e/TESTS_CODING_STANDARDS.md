@@ -39,16 +39,23 @@ Kod i identyfikatory są po angielsku. Tytuły testów, nazwy kroków i opisy as
 | Metoda | camelCase, `czasownikRzeczownik` | `clickStatsTab`, `login` |
 | Oczekiwana wartość | camelCase z przedrostkiem `expected` | `expectedRatesTitle` |
 
-Tytuł testu zaczyna się wielką literą i opisuje zachowanie. Test przypadku testowego ma na początku
-tytułu jego numer:
+Tytuł testu:
+
+* zaczyna się wielką literą i opisuje zachowanie w czasie teraźniejszym, bez „powinien”,
+* zaczyna się od tego, kto działa („Użytkownik…”), albo czego dotyczy reguła („Formularz…”,
+  „Podróż w archiwum…”),
+* w teście przypadku testowego ma na początku numer przypadku, a dalej ten sam tytuł co w `tests/manual`.
 
 ```typescript
 // ✅
 test("TC-05 Podróże wyświetlają się w grupach według statusu @logged", ...);
+test("TC-10-1 Użytkownik dodaje podróż krajową przez formularz @logged", ...);
+test("TC-11 Formularz podróży odrzuca błędne dane, a po poprawieniu zapisuje podróż @logged", ...);
 test("Logowanie poprawnymi danymi otwiera stronę Moje podróże @smoke", ...);
 
 // ❌
 test("test logowania", ...);
+test("Powinien dodać podróż", ...);
 ```
 
 ## Selektory
@@ -224,6 +231,9 @@ test("TC-10 Tytuł testu @logged", async ({ myTripsPage }) => {
 * Żaden test nie korzysta z danych utworzonych przez inny test.
 * Testy z `@logged` korzystają z jednego użytkownika testowego, dlatego dane izolujemy unikalnymi
   wartościami. Nazwy i miasta dostają unikalną końcówkę, np. `Kraków-a1b2`.
+* Po każdym teście fixture `tripsApi` usuwa przez API podróże, które test utworzył. Podróże tworzone
+  przez API są zapisywane automatycznie, a utworzone w formularzu test zgłasza przez
+  `tripsApi.addTripToCleanup(nazwa)`.
 * Testy uruchamiamy na jednym workerze (`workers: 1`), bo część z nich zmienia wspólny stan
   użytkownika, np. miasto pogody.
 
