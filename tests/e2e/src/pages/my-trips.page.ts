@@ -4,8 +4,10 @@ import { StatusTabsComponent } from "@_src/components/status-tabs.component";
 import { WeatherWidgetComponent } from "@_src/components/weather-widget.component";
 import { TripCardModel } from "@_src/models/trip-card.model";
 import { BasePage } from "@_src/pages/base.page";
+import { TripFormPage } from "@_src/pages/trip-form.page";
 import { TripPage } from "@_src/pages/trip.page";
 import { step } from "@_src/utils/step.decorator";
+import { parseTripCardData } from "@_src/utils/trip.util";
 import { Locator, Page } from "@playwright/test";
 
 export class MyTripsPage extends BasePage {
@@ -47,16 +49,23 @@ export class MyTripsPage extends BasePage {
     });
   }
 
+  getCardCoverPhoto(tripName: string): Locator {
+    return this.getCardByName(tripName).getByTestId("trip-cover-photo");
+  }
+
   async readTripCard(card: Locator): Promise<TripCardModel> {
     const tripName = (await card.getByRole("heading").textContent()) ?? "";
     const status = (await card.getByTestId("trip-status").textContent()) ?? "";
-    const details = (await card.getByRole("paragraph").textContent()) ?? "";
+    const cardDetails = parseTripCardData((await card.getByRole("paragraph").textContent()) ?? "");
 
-    const [dates, tripType, tripCharacter] = details.split(" · , ");
-    const [tripDateFrom, tripDateTo] = dates.split(" – ");
-
-    const tripCard: TripCardModel = { tripName, status, tripDateFrom, tripDateTo, tripType, tripCharacter };
+    const tripCard: TripCardModel = { tripName, status, ...cardDetails };
     return tripCard;
+  }
+
+  @step("Kliknij „Nowa podróż”")
+  async clickNewTripButton(): Promise<TripFormPage> {
+    await this.newTripButton.click();
+    return new TripFormPage(this.page);
   }
 
   @step((tripName: string) => `Odczytaj kartę podróży „${tripName}”`)

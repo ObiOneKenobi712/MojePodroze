@@ -22,6 +22,7 @@ test("Widok Moje podróże zawiera menu, zakładki i widgety @smoke @logged", as
   });
 
   await test.step("Zweryfikuj zakładki statusów", async () => {
+    await expect(statusTabs.tabs).toHaveCount(expectedStatusTabs.length);
     await expect(statusTabs.tabs, "Zakładki statusów mają właściwe nazwy i kolejność").toContainText(expectedStatusTabs);
   });
 

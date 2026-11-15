@@ -13,6 +13,11 @@ export class BasePage {
     await this.page.goto(`${this.url}${parameters}`);
   }
 
+  @step("Odśwież stronę")
+  async reload(): Promise<void> {
+    await this.page.reload();
+  }
+
   async getTitle(): Promise<string> {
     await this.page.waitForLoadState();
     return this.page.title();

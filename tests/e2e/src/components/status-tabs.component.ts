@@ -1,3 +1,4 @@
+import { TripStatusLabel } from "@_src/enums/trip.enum";
 import { StatusTabModel, StatusTabsModel } from "@_src/models/status-tab.model";
 import { step } from "@_src/utils/step.decorator";
 import { Locator, Page } from "@playwright/test";
@@ -38,6 +39,18 @@ export class StatusTabsComponent {
     const count = Number(words.pop());
 
     return { name: words.join(" "), count };
+  }
+
+  @step((status: TripStatusLabel) => `Wybierz zakładkę ze statusem „${status}”`)
+  async clickTabForStatus(status: TripStatusLabel): Promise<void> {
+    const tabsByStatus: Record<TripStatusLabel, Locator> = {
+      [TripStatusLabel.Planned]: this.plannedTab,
+      [TripStatusLabel.InProgress]: this.inProgressTab,
+      [TripStatusLabel.Completed]: this.completedTab,
+      [TripStatusLabel.Archived]: this.archivedTab,
+    };
+
+    await tabsByStatus[status].click();
   }
 
   @step("Wybierz zakładkę „Wszystkie”")
