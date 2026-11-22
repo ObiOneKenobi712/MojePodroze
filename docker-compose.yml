@@ -19,6 +19,7 @@ services:
       - "8000:8000"
     environment:
       MP_CORS_ORIGINS: '["http://localhost:5173","http://127.0.0.1:5173"]'
+      TZ: Europe/Warsaw
     volumes:
       - backend-data:/app/data # baza SQLite i zdjęcia przetrwają restart
 
